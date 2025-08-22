@@ -92,8 +92,8 @@
                 title: "Detroit Sentinels",
                 description: "A fictional story infused with biblical truth. We hope you enjoy and also received spiritual wisdom.",
                 price: "Free",
-                // Use a relative path, which is better for local testing
-                downloadUrl: "./DetroitSentinelsComplete.pdf"
+                // Use the Google Drive link
+                downloadUrl: "https://drive.google.com/file/d/1XLJLVBCd1DkLJgDgmwlhZOMzyZly0rb9/view?usp=drive_link"
             },
         ];
 
@@ -730,12 +730,12 @@
                                     c('h3', { className: "text-lg font-bold text-gray-900" }, ebook.title),
                                     c('p', { className: "text-sm text-gray-600 mt-1 mb-3" }, ebook.description),
                                     c('span', { className: "text-xl font-bold text-indigo-600 mb-4" }, ebook.price),
-                                    // Use an anchor tag for direct download
+                                    // Button that links to the Google Drive file
                                     c('a', {
                                         href: ebook.downloadUrl,
                                         className: "bg-indigo-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg hover:bg-indigo-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
                                         target: "_blank"
-                                    }, 'Read Online'),
+                                    }, 'View Ebook'),
                                     c('div', { className: "mt-4 text-sm text-gray-700" },
                                         c('p', null, 'Everything is free but if you would like to donate any amount you could do so via'),
                                         c('a', {
@@ -748,7 +748,7 @@
                                     )
                                 ))
                             ),
-                            c('p', { className: "text-center text-xs text-gray-500 mt-6" }, '*This "Read Online" button is for demonstration purposes only.')
+                            c('p', { className: "text-center text-xs text-gray-500 mt-6" }, '*These buttons are for demonstration purposes only.')
                         );
                     case 'game':
                         switch (currentGame) {
