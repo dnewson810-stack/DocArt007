@@ -9,6 +9,10 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <!-- Tailwind CSS from CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for graffiti style -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
     <script>
       // Configure Tailwind to use JIT mode for faster compilation
       tailwind.config = {
@@ -16,6 +20,7 @@
           extend: {
             fontFamily: {
               sans: ['Inter', 'sans-serif'],
+              graffiti: ['Permanent Marker', 'cursive']
             },
           },
         }
@@ -51,6 +56,16 @@
             { text: "I can do all things through him who strengthens me.", citation: "Philippians 4:13" },
             { text: "In the beginning was the Word, and the Word was with God, and the Word was God.", citation: "John 1:1" },
             { text: "The steadfast love of the Lord never ceases; his mercies never come to an end; they are new every morning; great is your faithfulness.", citation: "Lamentations 3:22-23" },
+            { text: "Trust in the Lord with all your heart, and do not lean on your own understanding.", citation: "Proverbs 3:5" },
+            { text: "So do not fear, for I am with you; do not be dismayed, for I am your God. I will strengthen you and help you; I will uphold you with my righteous right hand.", citation: "Isaiah 41:10" },
+            { text: "But the fruit of the Spirit is love, joy, peace, patience, kindness, goodness, faithfulness, gentleness, self-control; against such things there is no law.", citation: "Galatians 5:22-23" },
+            { text: "For where two or three are gathered in my name, there am I among them.", citation: "Matthew 18:20" },
+            { text: "And we know that in all things God works for the good of those who love him, who have been called according to his purpose.", citation: "Romans 8:28" },
+            { text: "I have stored up your word in my heart, that I might not sin against you.", citation: "Psalm 119:11" },
+            { text: "Come to me, all who labor and are heavy laden, and I will give you rest.", citation: "Matthew 11:28" },
+            { text: "Therefore, if anyone is in Christ, he is a new creation. The old has passed away; behold, the new has come.", citation: "2 Corinthians 5:17" },
+            { text: "Be kind to one another, tenderhearted, forgiving one another, as God in Christ forgave you.", citation: "Ephesians 4:32" },
+            { text: "Casting all your anxieties on him, because he cares for you.", citation: "1 Peter 5:7" },
         ];
         
         const dadJokes = [
@@ -59,6 +74,16 @@
             "I would tell you a joke about an apple, but it's not a very good one.",
             "Why don't scientists trust atoms? Because they make up everything!",
             "I'm reading a book on anti-gravity. It's impossible to put down!",
+            "Did you hear about the restaurant on the moon? Great food, no atmosphere.",
+            "Why did the scarecrow win an award? Because he was outstanding in his field!",
+            "I'm on a seafood diet. I see food, and I eat it.",
+            "What do you call a belt made of watches? A waist of time.",
+            "What do you get when you cross a snowman and a vampire? Frostbite.",
+            "Why don't skeletons fight each other? They don't have the guts.",
+            "Parallel lines have so much in common. It’s a shame they’ll never meet.",
+            "My wife asked me to stop singing 'Wonderwall' by Oasis. I said maybe.",
+            "Why was the math book sad? Because it had too many problems.",
+            "I told my wife she should embrace her mistakes. She gave me a hug.",
         ];
 
         const ebooks = [
@@ -72,6 +97,198 @@
             },
         ];
 
+        // --- Chess Game Logic ---
+        const initialBoard = [
+            ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
+            ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+            ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
+        ];
+
+        const PIECES = {
+            'R': '♜', 'N': '♞', 'B': '♝', 'Q': '♛', 'K': '♚', 'P': '♟',
+            'r': '♖', 'n': '♘', 'b': '♗', 'q': '♕', 'k': '♔', 'p': '♙'
+        };
+
+        const getPieceColor = (piece) => {
+            if (!piece) return null;
+            return piece.toUpperCase() === piece ? 'white' : 'black';
+        };
+
+        const getValidMoves = (board, row, col) => {
+            const piece = board[row][col];
+            if (!piece) return [];
+            const pieceType = piece.toLowerCase();
+            const pieceColor = getPieceColor(piece);
+            const moves = [];
+
+            const directions = {
+                pawn: pieceColor === 'white' ? [{r: -1, c: 0}] : [{r: 1, c: 0}],
+                pawnCapture: pieceColor === 'white' ? [{r: -1, c: -1}, {r: -1, c: 1}] : [{r: 1, c: -1}, {r: 1, c: 1}],
+                rook: [{r: 1, c: 0}, {r: -1, c: 0}, {r: 0, c: 1}, {r: 0, c: -1}],
+                knight: [{r: 2, c: 1}, {r: 2, c: -1}, {r: -2, c: 1}, {r: -2, c: -1}, {r: 1, c: 2}, {r: 1, c: -2}, {r: -1, c: 2}, {r: -1, c: -2}],
+                bishop: [{r: 1, c: 1}, {r: 1, c: -1}, {r: -1, c: 1}, {r: -1, c: -1}],
+                queen: [{r: 1, c: 0}, {r: -1, c: 0}, {r: 0, c: 1}, {r: 0, c: -1}, {r: 1, c: 1}, {r: 1, c: -1}, {r: -1, c: 1}, {r: -1, c: -1}],
+                king: [{r: 1, c: 0}, {r: -1, c: 0}, {r: 0, c: 1}, {r: 0, c: -1}, {r: 1, c: 1}, {r: 1, c: -1}, {r: -1, c: 1}, {r: -1, c: -1}]
+            };
+
+            const checkAndAddMove = (newRow, newCol) => {
+                if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+                    const targetPiece = board[newRow][newCol];
+                    if (!targetPiece || getPieceColor(targetPiece) !== pieceColor) {
+                        moves.push({ row: newRow, col: newCol });
+                    }
+                }
+            };
+            
+            switch (pieceType) {
+                case 'p':
+                    // Single move
+                    let singleMoveRow = row + directions.pawn[0].r;
+                    if (singleMoveRow >= 0 && singleMoveRow < 8 && !board[singleMoveRow][col]) {
+                        checkAndAddMove(singleMoveRow, col);
+                        // Double move
+                        let startRow = pieceColor === 'white' ? 6 : 1;
+                        if (row === startRow) {
+                            let doubleMoveRow = row + directions.pawn[0].r * 2;
+                            if (!board[doubleMoveRow][col]) {
+                                checkAndAddMove(doubleMoveRow, col);
+                            }
+                        }
+                    }
+                    // Captures
+                    directions.pawnCapture.forEach(dir => {
+                        let newRow = row + dir.r;
+                        let newCol = col + dir.c;
+                        if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+                            const targetPiece = board[newRow][newCol];
+                            if (targetPiece && getPieceColor(targetPiece) !== pieceColor) {
+                                moves.push({ row: newRow, col: newCol });
+                            }
+                        }
+                    });
+                    break;
+                case 'r':
+                case 'b':
+                case 'q':
+                    const pieceDirs = directions[pieceType === 'r' ? 'rook' : (pieceType === 'b' ? 'bishop' : 'queen')];
+                    pieceDirs.forEach(dir => {
+                        for (let i = 1; i < 8; i++) {
+                            const newRow = row + dir.r * i;
+                            const newCol = col + dir.c * i;
+                            if (newRow >= 0 && newCol >= 0 && newRow < 8 && newCol < 8) {
+                                const targetPiece = board[newRow][newCol];
+                                if (targetPiece) {
+                                    if (getPieceColor(targetPiece) !== pieceColor) {
+                                        moves.push({ row: newRow, col: newCol });
+                                    }
+                                    break; // Stop at first piece
+                                } else {
+                                    moves.push({ row: newRow, col: newCol });
+                                }
+                            } else {
+                                break;
+                            }
+                        }
+                    });
+                    break;
+                case 'n':
+                case 'k':
+                    directions[pieceType === 'n' ? 'knight' : 'king'].forEach(dir => {
+                        checkAndAddMove(row + dir.r, col + dir.c);
+                    });
+                    break;
+            }
+            return moves;
+        };
+
+        const isKingCaptured = (board, color) => {
+            const opponentKing = color === 'white' ? 'k' : 'K';
+            return board.flat().includes(opponentKing);
+        };
+        
+        // --- Spades Game Logic ---
+        const suits = ['spades', 'hearts', 'diamonds', 'clubs'];
+        const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+
+        const createDeck = () => {
+            let deck = [];
+            for (let suit of suits) {
+                for (let value of values) {
+                    deck.push({ suit, value });
+                }
+            }
+            return deck;
+        };
+
+        const shuffleDeck = (deck) => {
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+            return deck;
+        };
+        
+        const cardStrength = (card) => {
+            const suitRank = { 'clubs': 1, 'diamonds': 2, 'hearts': 3, 'spades': 4 };
+            const valueRank = { '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 };
+            return {
+                suit: suitRank[card.suit],
+                value: valueRank[card.value]
+            };
+        };
+
+        const determineWinner = (trick, trumpSuit) => {
+            if (trick.length === 0) return null;
+
+            let highestCard = trick[0].card;
+            let winningPlayerIndex = trick[0].playerIndex;
+            let currentSuit = highestCard.suit;
+
+            // First, find the highest card of the suit that was led
+            for (let i = 1; i < trick.length; i++) {
+                const { card, playerIndex } = trick[i];
+                if (card.suit === currentSuit && cardStrength(card).value > cardStrength(highestCard).value) {
+                    highestCard = card;
+                    winningPlayerIndex = playerIndex;
+                }
+            }
+
+            // Then, check for any trumps (spades)
+            let highestTrump = null;
+            let trumpWinnerIndex = null;
+            for (let i = 0; i < trick.length; i++) {
+                const { card, playerIndex } = trick[i];
+                if (card.suit === 'spades') {
+                    if (!highestTrump || cardStrength(card).value > cardStrength(highestTrump).value) {
+                        highestTrump = card;
+                        trumpWinnerIndex = playerIndex;
+                    }
+                }
+            }
+            
+            if (highestTrump) {
+                return trumpWinnerIndex;
+            }
+            
+            return winningPlayerIndex;
+        };
+        
+        const isValidSpadesMove = (hand, card, leadSuit) => {
+            if (card.suit === leadSuit) {
+                return true;
+            }
+            // If the player doesn't have the lead suit, they can play any card.
+            if (!hand.some(c => c.suit === leadSuit)) {
+                return true;
+            }
+            return false;
+        };
+
         // --- Main App Component ---
         const App = () => {
             const [currentVerse, setCurrentVerse] = useState(bibleVerses[0]);
@@ -80,47 +297,45 @@
             const [messageBox, setMessageBox] = useState({ visible: false, text: '' });
             const [currentGame, setCurrentGame] = useState('menu');
             
-            const [secretNumber, setSecretNumber] = useState(Math.floor(Math.random() * 100) + 1);
-            const [guess, setGuess] = useState('');
-            const [message, setMessage] = useState('Guess a number between 1 and 100.');
-            const [attempts, setAttempts] = useState(0);
+            // Chess State
+            const [chessBoard, setChessBoard] = useState(JSON.parse(JSON.stringify(initialBoard)));
+            const [selectedPiece, setSelectedPiece] = useState(null);
+            const [chessMessage, setChessMessage] = useState('White to move.');
+            const [turn, setTurn] = useState('white');
+            const [isGameOver, setIsGameOver] = useState(false);
             
-            const [rpsMessage, setRpsMessage] = useState('Choose your weapon!');
-            const [playerChoice, setPlayerChoice] = useState(null);
-            const [computerChoice, setComputerChoice] = useState(null);
-            
-            const [board, setBoard] = useState(Array(9).fill(null));
-            const [xIsNext, setXIsNext] = useState(true);
-            const [tttMessage, setTttMessage] = useState('Next player: X');
-            
-            const [playerCharacter, setPlayerCharacter] = useState(null);
-            const [scene, setScene] = useState('intro');
-            const [customName, setCustomName] = useState('');
-            const [playerHp, setPlayerHp] = useState(10);
-            const [enemyHp, setEnemyHp] = useState(5);
-            const [enemyName, setEnemyName] = useState('Spiritual Force of Evil');
-            const [battleLog, setBattleLog] = useState([]);
-            const [isPlayerTurn, setIsPlayerTurn] = useState(true);
-            
-            const handleGuess = () => {
-                const userGuess = parseInt(guess, 10);
-                if (isNaN(userGuess)) {
-                    setMessage('Please enter a valid number!');
-                    return;
+            // Spades Game State
+            const [spadesState, setSpadesState] = useState({
+                players: [],
+                hands: [[]],
+                bids: [],
+                tricksWon: [],
+                trick: [],
+                scores: [0, 0],
+                bags: [0, 0],
+                leadSuit: null,
+                playerTurn: 0,
+                phase: 'bidding',
+                message: "Place your bid.",
+                round: 1
+            });
+
+            useEffect(() => {
+                if (turn === 'black' && !isGameOver) {
+                    setTimeout(makeComputerMove, 1000);
                 }
-                setAttempts(attempts + 1);
-                
-                if (userGuess === secretNumber) {
-                    setMessage(`You got it! The number was ${secretNumber}. It took you ${attempts + 1} attempts.`);
-                    setSecretNumber(Math.floor(Math.random() * 100) + 1);
-                } else if (userGuess > secretNumber) {
-                    setMessage('Too high! Try again.');
-                } else {
-                    setMessage('Too low! Try again.');
+            }, [turn, isGameOver]);
+
+            useEffect(() => {
+                if (spadesState.phase === 'playing' && spadesState.playerTurn !== 0) {
+                    setTimeout(() => makeSpadesAIMove(), 1000);
                 }
-                setGuess('');
+            }, [spadesState.phase, spadesState.playerTurn]);
+
+            const showMessageBox = (text) => {
+                setMessageBox({ visible: true, text });
             };
-            
+
             const getRandomVerse = () => {
                 const randomIndex = Math.floor(Math.random() * bibleVerses.length);
                 setCurrentVerse(bibleVerses[randomIndex]);
@@ -130,114 +345,316 @@
                 const randomIndex = Math.floor(Math.random() * dadJokes.length);
                 setCurrentJoke(dadJokes[randomIndex]);
             };
-            
-            const handleRpsPlay = (choice) => {
-                const choices = ['Rock', 'Paper', 'Scissors'];
-                const computerIndex = Math.floor(Math.random() * 3);
-                const computerSelection = choices[computerIndex];
-                
-                setPlayerChoice(choice);
-                setComputerChoice(computerSelection);
 
-                if (choice === computerSelection) {
-                    setRpsMessage("It's a tie!");
-                } else if (
-                    (choice === 'Rock' && computerSelection === 'Scissors') ||
-                    (choice === 'Paper' && computerSelection === 'Rock') ||
-                    (choice === 'Scissors' && computerSelection === 'Paper')
-                ) {
-                    setRpsMessage("You win!");
-                } else {
-                    setRpsMessage("You lose!");
-                }
-            };
-            
-            const checkWinner = (squares) => {
-                const lines = [
-                    [0, 1, 2], [3, 4, 5], [6, 7, 8],
-                    [0, 3, 6], [1, 4, 7], [2, 5, 8],
-                    [0, 4, 8], [2, 4, 6],
-                ];
-                for (let i = 0; i < lines.length; i++) {
-                    const [a, b, c] = lines[i];
-                    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-                        return squares[a];
+            // --- Chess Logic ---
+            const makeComputerMove = () => {
+                const blackPieces = [];
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const piece = chessBoard[r][c];
+                        if (piece && getPieceColor(piece) === 'black') {
+                            blackPieces.push({ piece, row: r, col: c });
+                        }
                     }
                 }
-                return null;
+                
+                let possibleMoves = [];
+                blackPieces.forEach(p => {
+                    const validMoves = getValidMoves(chessBoard, p.row, p.col);
+                    validMoves.forEach(move => {
+                        possibleMoves.push({ from: {row: p.row, col: p.col}, to: move });
+                    });
+                });
+                
+                if (possibleMoves.length > 0) {
+                    const randomMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+                    const newBoard = JSON.parse(JSON.stringify(chessBoard));
+                    
+                    const movedPiece = newBoard[randomMove.from.row][randomMove.from.col];
+                    newBoard[randomMove.to.row][randomMove.to.col] = movedPiece;
+                    newBoard[randomMove.from.row][randomMove.from.col] = null;
+
+                    if (isKingCaptured(newBoard, 'white')) {
+                        setChessMessage('Black wins! The King has been captured.');
+                        setIsGameOver(true);
+                    } else {
+                        setChessMessage('White to move.');
+                        setTurn('white');
+                    }
+                    setChessBoard(newBoard);
+                } else {
+                    setChessMessage("Stalemate! Black can't move.");
+                    setIsGameOver(true);
+                }
             };
 
-            const handleTttClick = (i) => {
-                const squares = [...board];
-                if (checkWinner(squares) || squares[i]) {
+            const handleChessClick = (row, col) => {
+                if (isGameOver || turn === 'black') return;
+
+                if (!selectedPiece) {
+                    const piece = chessBoard[row][col];
+                    if (piece && getPieceColor(piece) === turn) {
+                        setSelectedPiece({ row, col });
+                    }
+                } else {
+                    const fromRow = selectedPiece.row;
+                    const fromCol = selectedPiece.col;
+                    const newBoard = JSON.parse(JSON.stringify(chessBoard));
+                    const pieceToMove = newBoard[fromRow][fromCol];
+                    
+                    const validMoves = getValidMoves(chessBoard, fromRow, fromCol);
+                    const isMoveValid = validMoves.some(move => move.row === row && move.col === col);
+                    
+                    if (isMoveValid) {
+                        newBoard[row][col] = pieceToMove;
+                        newBoard[fromRow][fromCol] = null;
+                        
+                        if (isKingCaptured(newBoard, 'black')) {
+                            setChessMessage('White wins! The King has been captured.');
+                            setIsGameOver(true);
+                        } else {
+                            setChessMessage('Black is thinking...');
+                            setTurn('black');
+                        }
+                        setChessBoard(newBoard);
+                    } else {
+                        showMessageBox("Invalid move.");
+                    }
+                    setSelectedPiece(null);
+                }
+            };
+            
+            const resetChessGame = () => {
+                setChessBoard(JSON.parse(JSON.stringify(initialBoard)));
+                setSelectedPiece(null);
+                setChessMessage('White to move.');
+                setTurn('white');
+                setIsGameOver(false);
+            };
+
+            // --- Spades Logic ---
+            const startNewSpadesGame = () => {
+                const deck = shuffleDeck(createDeck());
+                const hands = [[], [], [], []];
+                for (let i = 0; i < 52; i++) {
+                    hands[i % 4].push(deck[i]);
+                }
+                
+                setSpadesState({
+                    players: ['You', 'Computer 1', 'Computer 2', 'Computer 3'],
+                    hands,
+                    bids: [0, 0, 0, 0],
+                    tricksWon: [0, 0, 0, 0],
+                    trick: [],
+                    scores: [0, 0],
+                    bags: [0, 0],
+                    leadSuit: null,
+                    playerTurn: 0,
+                    phase: 'bidding',
+                    message: "Place your bid.",
+                    round: 1
+                });
+            };
+
+            const handleSpadesBid = (bid) => {
+                const newBids = [...spadesState.bids];
+                newBids[0] = bid;
+                setSpadesState(prev => ({
+                    ...prev,
+                    bids: newBids,
+                    message: "Bids are in. Game starts!",
+                    phase: 'playing',
+                    playerTurn: 0 // Player always goes first
+                }));
+            };
+
+            const calculateScores = () => {
+                const { bids, tricksWon, scores, bags } = spadesState;
+                const newScores = [...scores];
+                const newBags = [...bags];
+                
+                // Calculate team 1 (player and computer 2)
+                const team1Bid = bids[0] + bids[2];
+                const team1Tricks = tricksWon[0] + tricksWon[2];
+                if (team1Tricks >= team1Bid) {
+                    newScores[0] += team1Bid * 10;
+                    newBags[0] += team1Tricks - team1Bid;
+                } else {
+                    newScores[0] -= team1Bid * 10;
+                }
+
+                // Calculate team 2 (computer 1 and computer 3)
+                const team2Bid = bids[1] + bids[3];
+                const team2Tricks = tricksWon[1] + tricksWon[3];
+                if (team2Tricks >= team2Bid) {
+                    newScores[1] += team2Bid * 10;
+                    newBags[1] += team2Tricks - team2Bid;
+                } else {
+                    newScores[1] -= team2Bid * 10;
+                }
+
+                // Check for bag penalties
+                if (newBags[0] >= 10) {
+                    newScores[0] -= 100;
+                    newBags[0] -= 10;
+                }
+                if (newBags[1] >= 10) {
+                    newScores[1] -= 100;
+                    newBags[1] -= 10;
+                }
+
+                setSpadesState(prev => ({
+                    ...prev,
+                    scores: newScores,
+                    bags: newBags,
+                    round: prev.round + 1,
+                    message: `Round ${prev.round} over. Scores updated. Starting next round...`,
+                    phase: 'bidding'
+                }));
+                setTimeout(startNewSpadesGame, 2000);
+            };
+
+            const handleSpadesPlayerMove = (card) => {
+                if (spadesState.playerTurn !== 0 || isGameOver) return;
+                
+                const currentHand = spadesState.hands[0];
+                if (!isValidSpadesMove(currentHand, card, spadesState.leadSuit)) {
+                    showMessageBox("You must follow suit if you can!");
                     return;
                 }
-                squares[i] = xIsNext ? 'X' : 'O';
-                setBoard(squares);
-                setXIsNext(!xIsNext);
+
+                const newHands = [...spadesState.hands];
+                const cardIndex = newHands[0].findIndex(c => c.suit === card.suit && c.value === card.value);
+                newHands[0].splice(cardIndex, 1);
                 
-                const winner = checkWinner(squares);
-                if (winner) {
-                    setTttMessage(`Winner: ${winner}`);
-                } else if (squares.every(Boolean)) {
-                    setTttMessage("It's a draw!");
-                } else {
-                    setTttMessage(`Next player: ${xIsNext ? 'O' : 'X'}`);
-                }
+                const newTrick = [...spadesState.trick, { card, playerIndex: 0 }];
+                
+                setSpadesState(prev => ({
+                    ...prev,
+                    hands: newHands,
+                    trick: newTrick,
+                    leadSuit: prev.leadSuit || card.suit,
+                    playerTurn: (prev.playerTurn + 1) % 4
+                }));
             };
             
-            const renderSquare = (i) => {
-                return c('button', {
-                    className: "w-20 h-20 text-4xl font-bold bg-white border border-gray-400 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105",
-                    onClick: () => handleTttClick(i)
-                }, board[i]);
-            };
+            const makeSpadesAIMove = () => {
+                const currentPlayerIndex = spadesState.playerTurn;
+                const currentHand = spadesState.hands[currentPlayerIndex];
+                const newTrick = [...spadesState.trick];
+                let cardToPlay;
+                
+                // Simplified AI logic: find a valid card, if none, play first one
+                const validCards = currentHand.filter(card => isValidSpadesMove(currentHand, card, spadesState.leadSuit));
+                if (validCards.length > 0) {
+                     cardToPlay = validCards[0];
+                } else {
+                    cardToPlay = currentHand[0];
+                }
 
-            const resetTtt = () => {
-                setBoard(Array(9).fill(null));
-                setXIsNext(true);
-                setTttMessage('Next player: X');
-            };
+                const newHands = [...spadesState.hands];
+                const cardIndex = newHands[currentPlayerIndex].findIndex(c => c.suit === cardToPlay.suit && c.value === cardToPlay.value);
+                newHands[currentPlayerIndex].splice(cardIndex, 1);
+                newTrick.push({ card: cardToPlay, playerIndex: currentPlayerIndex });
 
-            const handleCharacterSelect = (character) => {
-                setPlayerCharacter(character);
-                setScene('game-start');
+                setSpadesState(prev => ({
+                    ...prev,
+                    hands: newHands,
+                    trick: newTrick,
+                    leadSuit: prev.leadSuit || cardToPlay.suit,
+                    playerTurn: (prev.playerTurn + 1) % 4
+                }));
             };
             
-            const handlePlayerAttack = () => {
-                if (!isPlayerTurn) return;
-
-                const playerDamage = Math.floor(Math.random() * 3) + 1;
-                const newEnemyHp = enemyHp - playerDamage;
-                setEnemyHp(newEnemyHp);
-                setBattleLog(log => [...log, `You strike the enemy for ${playerDamage} damage.`]);
-
-                if (newEnemyHp <= 0) {
-                    setScene('victory');
-                } else {
-                    setIsPlayerTurn(false);
-                    setTimeout(() => {
-                        const enemyDamage = Math.floor(Math.random() * 2) + 1;
-                        const newPlayerHp = playerHp - enemyDamage;
-                        setPlayerHp(newPlayerHp);
-                        setBattleLog(log => [...log, `${enemyName} retaliates for ${enemyDamage} damage.`]);
-                        if (newPlayerHp <= 0) {
-                            setScene('game-over');
-                        } else {
-                            setIsPlayerTurn(true);
-                        }
-                    }, 1000);
+            useEffect(() => {
+                if (spadesState.trick.length === 4) {
+                    const winner = determineWinner(spadesState.trick, 'spades');
+                    const newTricksWon = [...spadesState.tricksWon];
+                    newTricksWon[winner]++;
+                    
+                    if (spadesState.hands.some(hand => hand.length === 0)) {
+                        setSpadesState(prev => ({
+                            ...prev,
+                            tricksWon: newTricksWon,
+                            trick: [],
+                            leadSuit: null,
+                            playerTurn: winner,
+                            message: `Round complete! Player ${winner + 1} won this trick.`
+                        }));
+                        setTimeout(calculateScores, 2000);
+                    } else {
+                         setSpadesState(prev => ({
+                            ...prev,
+                            tricksWon: newTricksWon,
+                            trick: [],
+                            leadSuit: null,
+                            playerTurn: winner,
+                            message: `Player ${winner + 1} won this trick.`
+                        }));
+                    }
                 }
+            }, [spadesState.trick]);
+
+            const renderSpadesBidding = () => {
+                const bids = Array.from({ length: 14 }, (_, i) => i); // 0-13
+                return c('div', { className: "flex flex-col items-center" },
+                    c('h3', { className: "text-xl font-bold mb-4" }, "Place your bid (0-13):"),
+                    c('div', { className: "grid grid-cols-7 gap-2 max-w-lg" },
+                        bids.map(bid => c('button', {
+                            key: bid,
+                            onClick: () => handleSpadesBid(bid),
+                            className: "p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        }, bid))
+                    )
+                );
             };
 
-            const resetGame = () => {
-                setPlayerCharacter(null);
-                setScene('intro');
-                setCustomName('');
-                setPlayerHp(10);
-                setEnemyHp(5);
-                setBattleLog([]);
-                setIsPlayerTurn(true);
+            const renderSpadesGame = () => {
+                const { players, hands, bids, tricksWon, trick, playerTurn, scores, bags } = spadesState;
+                const playerHand = hands[0];
+                const isPlayerTurn = playerTurn === 0;
+
+                return c('div', { className: "flex flex-col items-center p-4 space-y-4" },
+                    c('button', {
+                        onClick: () => setCurrentGame('menu'),
+                        className: "absolute top-4 left-4 text-gray-500 hover:text-gray-800 transition-colors"
+                    }, '← Back'),
+                    c('h2', { className: "text-2xl font-bold" }, "Spades"),
+                    c('p', { className: "text-lg text-gray-600 mb-4" }, spadesState.message),
+                    c('div', { className: "flex justify-center w-full" },
+                         c('div', { className: "grid grid-cols-4 gap-4" },
+                            trick.map((playedCard, index) => c('div', { key: index, className: "p-2 text-center" },
+                                c('div', { className: "text-3xl" }, `
+                                    ${playedCard.card.suit === 'spades' ? '♠️' : playedCard.card.suit === 'hearts' ? '♥️' : playedCard.card.suit === 'diamonds' ? '♦️' : '♣️'}
+                                    ${playedCard.card.value}
+                                `),
+                                c('p', { className: "text-xs mt-1" }, players[playedCard.playerIndex])
+                            ))
+                        )
+                    ),
+                    c('div', { className: "text-center my-4" }, `It's ${players[playerTurn]}'s turn.`),
+                    c('div', { className: "w-full overflow-x-auto" },
+                        c('div', { className: "flex justify-center space-x-2" },
+                            playerHand.sort((a,b) => cardStrength(a).suit - cardStrength(b).suit || cardStrength(a).value - cardStrength(b).value).map((card, index) => c('button', {
+                                key: `${card.suit}-${card.value}`,
+                                onClick: () => handleSpadesPlayerMove(card),
+                                disabled: !isPlayerTurn || spadesState.phase !== 'playing',
+                                className: `p-2 rounded-lg border-2 shadow-md transition-transform transform ${card.suit === 'hearts' || card.suit === 'diamonds' ? 'text-red-500' : 'text-gray-800'} ${isPlayerTurn && spadesState.phase === 'playing' ? 'hover:scale-110' : ''}`
+                            }, c('div', { className: "text-lg font-bold" }, card.value), c('div', { className: "text-xs" }, card.suit)))
+                        )
+                    ),
+                    c('div', { className: "mt-6 w-full max-w-lg bg-gray-100 p-4 rounded-xl shadow-inner" },
+                        c('h3', { className: "text-lg font-bold text-center mb-2" }, "Scoreboard"),
+                        c('div', { className: "grid grid-cols-2 gap-2 text-center" },
+                            c('div', { className: "font-bold text-lg" }, "Team 1 (You & C2)"),
+                            c('div', { className: "font-bold text-lg" }, "Team 2 (C1 & C3)"),
+                            c('div', null, `Score: ${scores[0]}`),
+                            c('div', null, `Score: ${scores[1]}`),
+                            c('div', null, `Bags: ${bags[0]}`),
+                            c('div', null, `Bags: ${bags[1]}`)
+                        )
+                    )
+                );
             };
 
             const renderMessageBox = () => {
@@ -317,9 +734,8 @@
                                     c('a', {
                                         href: ebook.downloadUrl,
                                         className: "bg-indigo-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg hover:bg-indigo-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
-                                        download: true, // This attribute prompts a download
                                         target: "_blank"
-                                    }, 'Download Now'),
+                                    }, 'Read Online'),
                                     c('div', { className: "mt-4 text-sm text-gray-700" },
                                         c('p', null, 'Everything is free but if you would like to donate any amount you could do so via'),
                                         c('a', {
@@ -332,7 +748,7 @@
                                     )
                                 ))
                             ),
-                            c('p', { className: "text-center text-xs text-gray-500 mt-6" }, '*This "Download Now" button is for demonstration purposes only.')
+                            c('p', { className: "text-center text-xs text-gray-500 mt-6" }, '*This "Read Online" button is for demonstration purposes only.')
                         );
                     case 'game':
                         switch (currentGame) {
@@ -341,170 +757,47 @@
                                     c('h2', { className: "text-2xl font-bold text-gray-800" }, 'Select a Game'),
                                     c('div', { className: "flex flex-col space-y-4 w-full" },
                                         c('button', {
-                                            onClick: () => setCurrentGame('guess-number'),
-                                            className: "bg-purple-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-purple-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-                                        }, 'Guess the Number'),
+                                            onClick: () => {
+                                                setCurrentGame('spades');
+                                                startNewSpadesGame();
+                                            },
+                                            className: "bg-gray-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-gray-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                                        }, '2D Spades'),
                                         c('button', {
-                                            onClick: () => setCurrentGame('rps'),
+                                            onClick: () => setCurrentGame('chess'),
                                             className: "bg-red-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-red-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                                        }, 'Rock, Paper, Scissors'),
-                                        c('button', {
-                                            onClick: () => setCurrentGame('tictactoe'),
-                                            className: "bg-green-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-green-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                                        }, 'Tic-Tac-Toe'),
-                                        c('button', {
-                                            onClick: () => setCurrentGame('detroit-sentinels'),
-                                            className: "bg-blue-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                                        }, 'Detroit Sentinels Adventure 💪😎')
+                                        }, '2D Chess'),
                                     )
                                 );
-                            case 'guess-number':
+                            case 'chess':
                                 return c('div', { className: "flex flex-col items-center p-6 space-y-4 text-center" },
                                     c('button', {
                                         onClick: () => setCurrentGame('menu'),
                                         className: "absolute top-4 left-4 text-gray-500 hover:text-gray-800 transition-colors"
                                     }, '← Back'),
-                                    c('h2', { className: "text-2xl font-bold text-gray-800" }, 'Guess the Number'),
-                                    c('p', { className: "text-gray-600" }, message),
-                                    c('input', {
-                                        type: "number",
-                                        value: guess,
-                                        onChange: (e) => setGuess(e.target.value),
-                                        className: "w-full max-w-xs p-3 text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500",
-                                        placeholder: "Enter your guess"
-                                    }),
-                                    c('button', {
-                                        onClick: handleGuess,
-                                        className: "bg-indigo-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-indigo-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                    }, 'Submit Guess'),
-                                    c('p', { className: "text-sm text-gray-500 mt-2" }, `Attempts: ${attempts}`)
-                                );
-                            case 'rps':
-                                return c('div', { className: "flex flex-col items-center p-6 space-y-6 text-center" },
-                                    c('button', {
-                                        onClick: () => setCurrentGame('menu'),
-                                        className: "absolute top-4 left-4 text-gray-500 hover:text-gray-800 transition-colors"
-                                    }, '← Back'),
-                                    c('h2', { className: "text-2xl font-bold text-gray-800" }, 'Rock, Paper, Scissors'),
-                                    c('p', { className: "text-gray-600 font-semibold" }, rpsMessage),
-                                    c('div', { className: "flex space-x-4" },
-                                        c('button', {
-                                            onClick: () => handleRpsPlay('Rock'),
-                                            className: "p-4 rounded-xl text-3xl transition-all duration-300 hover:scale-110 shadow-lg bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
-                                        }, '🪨'),
-                                        c('button', {
-                                            onClick: () => handleRpsPlay('Paper'),
-                                            className: "p-4 rounded-xl text-3xl transition-all duration-300 hover:scale-110 shadow-lg bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
-                                        }, '📄'),
-                                        c('button', {
-                                            onClick: () => handleRpsPlay('Scissors'),
-                                            className: "p-4 rounded-xl text-3xl transition-all duration-300 hover:scale-110 shadow-lg bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
-                                        }, '✂️')
+                                    c('h2', { className: "text-2xl font-bold text-gray-800" }, '2D Chess Game'),
+                                    c('p', { className: `text-lg font-semibold ${isGameOver ? 'text-red-600' : 'text-gray-600'}` }, chessMessage),
+                                    c('div', { className: "grid grid-cols-8 grid-rows-8 w-[400px] h-[400px] border-2 border-gray-700 shadow-xl" },
+                                        chessBoard.flat().map((piece, index) => {
+                                            const row = Math.floor(index / 8);
+                                            const col = index % 8;
+                                            const isDark = (row + col) % 2 === 1;
+                                            const isSelected = selectedPiece && selectedPiece.row === row && selectedPiece.col === col;
+
+                                            return c('button', {
+                                                key: index,
+                                                onClick: () => handleChessClick(row, col),
+                                                className: `w-full h-full text-3xl flex items-center justify-center font-serif transition-colors ${ isDark ? 'bg-amber-800' : 'bg-amber-100' } ${ isSelected ? 'ring-4 ring-yellow-400' : '' }`
+                                            }, piece ? PIECES[piece] : '');
+                                        })
                                     ),
-                                    playerChoice && c('div', { className: "mt-4 text-center" },
-                                        c('p', { className: "text-lg font-bold" }, 'You chose: ', c('span', { className: "text-blue-600" }, playerChoice)),
-                                        c('p', { className: "text-lg font-bold" }, 'Computer chose: ', c('span', { className: "text-red-600" }, computerChoice))
-                                    )
-                                );
-                            case 'tictactoe':
-                                return c('div', { className: "flex flex-col items-center p-6 space-y-4 text-center" },
-                                    c('button', {
-                                        onClick: () => setCurrentGame('menu'),
-                                        className: "absolute top-4 left-4 text-gray-500 hover:text-gray-800 transition-colors"
-                                    }, '← Back'),
-                                    c('h2', { className: "text-2xl font-bold text-gray-800" }, 'Tic-Tac-Toe'),
-                                    c('p', { className: "text-gray-600 font-semibold" }, tttMessage),
-                                    c('div', { className: "grid grid-cols-3 gap-2" },
-                                        renderSquare(0), renderSquare(1), renderSquare(2),
-                                        renderSquare(3), renderSquare(4), renderSquare(5),
-                                        renderSquare(6), renderSquare(7), renderSquare(8)
-                                    ),
-                                    (checkWinner(board) || board.every(Boolean)) && c('button', {
-                                        onClick: resetTtt,
-                                        className: "bg-blue-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:scale-105"
+                                    isGameOver && c('button', {
+                                        onClick: resetChessGame,
+                                        className: "mt-4 bg-blue-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:scale-105"
                                     }, 'Play Again')
                                 );
-                            case 'detroit-sentinels':
-                                return c('div', { className: "flex flex-col items-center p-6 space-y-6 text-center" },
-                                    c('button', {
-                                        onClick: () => setCurrentGame('menu'),
-                                        className: "absolute top-4 left-4 text-gray-500 hover:text-gray-800 transition-colors"
-                                    }, '← Back'),
-                                    c('h2', { className: "text-2xl font-bold text-gray-800" }, 'Detroit Sentinels Adventure'),
-                                    scene === 'intro' && c('div', { className: "flex flex-col items-center space-y-4" },
-                                        c('p', { className: "text-gray-600" }, 'Choose your character, or create your own! ✌️'),
-                                        c('div', { className: "flex space-x-4" },
-                                            c('button', { onClick: () => handleCharacterSelect('Al'), className: "bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-full shadow hover:bg-gray-300 transition-colors" }, 'Al Smith'),
-                                            c('button', { onClick: () => handleCharacterSelect('Sarah'), className: "bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-full shadow hover:bg-gray-300 transition-colors" }, 'Sarah Gonzalez'),
-                                            c('button', { onClick: () => handleCharacterSelect('Jack'), className: "bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-full shadow hover:bg-gray-300 transition-colors" }, 'Jack Roberts')
-                                        ),
-                                        c('div', { className: "w-full max-w-xs flex flex-col items-center space-y-2" },
-                                            c('input', {
-                                                type: "text",
-                                                value: customName,
-                                                onChange: (e) => setCustomName(e.target.value),
-                                                className: "w-full p-2 text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500",
-                                                placeholder: "Or enter your name"
-                                            }),
-                                            c('button', {
-                                                onClick: () => handleCharacterSelect(customName || 'A new Sentinel'),
-                                                className: "bg-indigo-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg hover:bg-indigo-700 transition transform hover:scale-105"
-                                            }, 'Start Your Journey')
-                                        )
-                                    ),
-                                    scene === 'game-start' && c('div', { className: "text-center" },
-                                        c('p', { className: "text-lg text-gray-800 font-semibold mb-4" }, `Welcome, ${playerCharacter}! Your adventure begins now. 😎`),
-                                        playerCharacter === 'Al' && c('p', { className: "text-gray-600" }, `The basketball felt like an extension of your own hand. On the cracked court behind your house in Detroit, the rhythm of the dribble was the only thing that silenced the low hum of anxiety in your chest. A golden light, brighter than any stadium floodlight, flared in your peripheral vision. It wasn't outside you; it was inside you.`),
-                                        playerCharacter === 'Sarah' && c('p', { className: "text-gray-600" }, `Hunched over a chemistry textbook at the kitchen table, the numbers kept blurring. A voice, clear as a bell and warm as sunshine, whispered your name in your mind. "Do not be afraid," it said. A gentle warmth spread through you, and the air seemed to shimmer with faint, iridescent colors.`),
-                                        playerCharacter === 'Jack' && c('p', { className: "text-gray-600" }, `In the quiet of the public library, you traced the faded lines of an old city map. As your fingers brushed over a section, a faint, ethereal glow emanated from the paper. The hum of the lights and the rustle of pages faded away, replaced by the whisper of a distant, holy wind. You knew this was the start of something new.`),
-                                        (playerCharacter !== 'Al' && playerCharacter !== 'Sarah' && playerCharacter !== 'Jack') && c('p', { className: "text-gray-600" }, `You've been chosen for a divine mission in the heart of Detroit. You feel a sudden sense of purpose, a calling to fight a spiritual battle in this city. Your journey to become a Sentinel has just begun.`),
-                                        c('button', { onClick: () => setScene('city-exploration'), className: "mt-6 bg-blue-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:scale-105" }, 'Continue')
-                                    ),
-                                    scene === 'city-exploration' && c('div', { className: "text-center" },
-                                        c('p', { className: "text-lg text-gray-800 font-semibold mb-4" }, 'You are in the city of Detroit. What do you do?'),
-                                        c('p', { className: "text-gray-600" }, 'You feel a subtle pull towards a location where darkness seems to have taken hold.'),
-                                        c('button', { onClick: () => setScene('encounter'), className: "mt-6 bg-blue-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:scale-105" }, 'Follow the feeling')
-                                    ),
-                                    scene === 'encounter' && c('div', { className: "text-center" },
-                                        c('p', { className: "text-lg text-gray-800 font-semibold mb-4" }, 'You come face to face with a malevolent spiritual force. It\'s time to fight!'),
-                                        c('button', { onClick: () => setScene('combat'), className: "mt-6 bg-red-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg hover:bg-red-700 transition transform hover:scale-105" }, 'Engage in Combat')
-                                    ),
-                                    scene === 'combat' && c('div', { className: "text-center space-y-4" },
-                                        c('div', { className: "flex justify-around items-center w-full" },
-                                            c('div', { className: "flex flex-col items-center" },
-                                                c('span', { className: "text-lg font-bold text-red-600" }, enemyName),
-                                                c('div', { className: "w-24 h-4 bg-gray-300 rounded-full" },
-                                                    c('div', { className: "bg-red-500 h-full rounded-full", style: { width: `${(enemyHp / 5) * 100}%` } })
-                                                ),
-                                                c('span', { className: "text-sm" }, `${enemyHp} HP`)
-                                            ),
-                                            c('span', { className: "text-2xl font-extrabold text-gray-500" }, 'VS'),
-                                            c('div', { className: "flex flex-col items-center" },
-                                                c('span', { className: "text-lg font-bold text-blue-600" }, playerCharacter),
-                                                c('div', { className: "w-24 h-4 bg-gray-300 rounded-full" },
-                                                    c('div', { className: "bg-blue-500 h-full rounded-full", style: { width: `${(playerHp / 10) * 100}%` } })
-                                                ),
-                                                c('span', { className: "text-sm" }, `${playerHp} HP`)
-                                            )
-                                        ),
-                                        c('div', { className: "bg-gray-100 p-4 rounded-lg h-32 overflow-y-auto border border-gray-300" },
-                                            battleLog.map((log, index) => c('p', { key: index, className: "text-sm text-gray-700" }, log))
-                                        ),
-                                        c('button', {
-                                            onClick: handlePlayerAttack,
-                                            disabled: !isPlayerTurn,
-                                            className: "bg-green-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-green-700 disabled:bg-gray-400 transition-colors"
-                                        }, 'Attack')
-                                    ),
-                                    scene === 'victory' && c('div', { className: "text-center" },
-                                        c('p', { className: "text-lg text-green-600 font-semibold mb-4" }, 'You have defeated the enemy! The light of God fills the area, dispelling the darkness. 😊'),
-                                        c('button', { onClick: resetGame, className: "mt-6 bg-blue-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:scale-105" }, 'Restart Journey')
-                                    ),
-                                    scene === 'game-over' && c('div', { className: "text-center" },
-                                        c('p', { className: "text-lg text-red-600 font-semibold mb-4" }, 'You have been overcome by the darkness. Your fight for Detroit ends here. 😔'),
-                                        c('button', { onClick: resetGame, className: "mt-6 bg-blue-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:scale-105" }, 'Try Again')
-                                    )
-                                );
+                            case 'spades':
+                                return spadesState.phase === 'bidding' ? renderSpadesBidding() : renderSpadesGame();
                             default:
                                 return null;
                         }
@@ -525,7 +818,7 @@
             return c('div', { className: "flex flex-col items-center justify-center min-h-screen p-4 font-sans bg-sky-200" },
                 renderMessageBox(),
                 c('div', { className: "relative bg-white bg-opacity-90 rounded-xl shadow-2xl p-6 md:p-10 w-full max-w-lg mb-4" },
-                    c('h1', { className: "text-3xl font-extrabold text-gray-900 text-center mb-6" }, 'DocArtAtlier'),
+                    c('h1', { className: "text-3xl font-graffiti text-gray-900 text-center mb-6" }, 'DocArtAtlier'),
                     renderContent()
                 ),
                 c('nav', { className: "relative bg-white rounded-full shadow-xl w-full max-w-sm mt-4 p-2 flex justify-around" },
