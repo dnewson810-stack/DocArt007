@@ -67,7 +67,8 @@
                 title: "Detroit Sentinels",
                 description: "A fictional story infused with biblical truth. We hope you enjoy and also received spiritual wisdom.",
                 price: "Free",
-                downloadUrl: "https://your-domain.vercel.app/DetroitSentinelsComplete.pdf" // Placeholder URL, replace with your actual file URL
+                // Use a relative path, which is better for local testing
+                downloadUrl: "./DetroitSentinelsComplete.pdf"
             },
         ];
 
@@ -504,18 +505,18 @@
                                         c('button', { onClick: resetGame, className: "mt-6 bg-blue-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:scale-105" }, 'Try Again')
                                     )
                                 );
-                            case 'purpose':
-                                return c('div', { className: "text-center p-4" },
-                                    c('h2', { className: "text-2xl font-bold text-gray-800 mb-4" }, 'Our Purpose'),
-                                    c('div', { className: "text-gray-700 space-y-4 text-left" },
-                                        c('p', null, 'Welcome, my name is Denzel but you can just call me DocArt and I care deeply for the youth! As a young man growing up in the inner city of Detroit I was always into drawing, basketball, riding bikes, video games etc etc. However I would see a lot of other youth get into wayward wicked activities that they had no business getting involved with. A lot of it was due to lack of resources and lack of parental leadership. And a lot of the time it was due to poor choices. However I don\'t think it is as bad as it is today.'),
-                                        c('p', null, 'Currently, the culture for our youth today is pushing them further away from outside, wholesome content and it is encouraging them to identify with dark things just to fit in. I created this site and the content I create to combat the culture because nothing is more good or greater than mine and your Lord and Savior Jesus Christ.'),
-                                        c('p', null, 'I believe If we put Him in everything we do we cannot fail and we also introduce others to Him. Playing a part in winning souls for His kingdom and taking souls from the opps kingdom.')
-                                    )
-                                );
                             default:
                                 return null;
                         }
+                    case 'purpose':
+                        return c('div', { className: "text-center p-4" },
+                            c('h2', { className: "text-2xl font-bold text-gray-800 mb-4" }, 'Our Purpose'),
+                            c('div', { className: "text-gray-700 space-y-4 text-left" },
+                                c('p', null, 'Welcome, my name is Denzel but you can just call me DocArt and I care deeply for the youth! As a young man growing up in the inner city of Detroit I was always into drawing, basketball, riding bikes, video games etc etc. However I would see a lot of other youth get into wayward wicked activities that they had no business getting involved with. A lot of it was due to lack of resources and lack of parental leadership. And a lot of the time it was due to poor choices. However I don\'t think it is as bad as it is today.'),
+                                c('p', null, 'Currently, the culture for our youth today is pushing them further away from outside, wholesome content and it is encouraging them to identify with dark things just to fit in. I created this site and the content I create to combat the culture because nothing is more good or greater than mine and your Lord and Savior Jesus Christ.'),
+                                c('p', null, 'I believe If we put Him in everything we do we cannot fail and we also introduce others to Him. Playing a part in winning souls for His kingdom and taking souls from the opps kingdom.')
+                            )
+                        );
                     default:
                         return null;
                 }
