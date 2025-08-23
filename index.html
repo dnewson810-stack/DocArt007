@@ -6,6 +6,8 @@
     <title>Welcome to DocAtlier</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             background-color: #d9534f; /* Changed background to red */
@@ -106,6 +108,44 @@
             display: block;
         }
 
+        /* Sub-tab styling for Games section */
+        .sub-tab-bar {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .sub-tab-button {
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            background-color: #c9302c; /* Darker red */
+            color: white;
+            border: 2px solid #d9534f; /* Lighter red border */
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sub-tab-button.active {
+            background-color: #d9534f; /* Lighter red */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .sub-tab-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .sub-content-section {
+            display: none;
+        }
+
+        .sub-content-section.active {
+            display: block;
+        }
+
         /* Chess Board Styling */
         #chess-board-canvas {
             border-radius: 0.75rem;
@@ -115,6 +155,7 @@
             height: auto;
             background-color: #d9534f;
             border: 2px solid #c9302c;
+            touch-action: none;
         }
 
         .game-controls {
@@ -136,7 +177,7 @@
         .reset-button {
             padding: 0.75rem 1.5rem;
             border-radius: 9999px;
-            background-color: #d9534f;
+            background-color: #2e6097;
             color: white;
             font-weight: bold;
             border: none;
@@ -146,10 +187,10 @@
         }
 
         .reset-button:hover {
-            background-color: #c9302c;
+            background-color: #3b76b2;
             transform: translateY(-2px);
         }
-
+        
         .section-content {
             background-color: #1a2e47;
             padding: 2rem;
@@ -261,7 +302,58 @@
             line-height: 1.5;
             color: white;
         }
-        
+
+        /* Hangman Game Styling */
+        .hangman-game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        #hangman-canvas {
+            border-radius: 0.75rem;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            border: 2px solid #c9302c;
+        }
+        .word-display {
+            font-family: 'Bungee', cursive;
+            font-size: 2rem;
+            letter-spacing: 0.5rem;
+            margin-top: 1rem;
+        }
+        .guess-input {
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            max-width: 600px;
+        }
+        .letter-button {
+            padding: 0.75rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 0.5rem;
+            background-color: #2e6097;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .letter-button:hover {
+            background-color: #3b76b2;
+            transform: translateY(-1px);
+        }
+        .letter-button:disabled {
+            background-color: #555;
+            color: #aaa;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
     </style>
 </head>
 <body>
@@ -289,15 +381,36 @@
 
     <!-- Games Section -->
     <div id="games-content" class="content-section">
-        <h2 class="text-xl font-bold text-white mb-4 text-center">Chess</h2>
-        <canvas id="chess-board-canvas"></canvas>
-        <div class="game-controls">
-            <div id="status" class="status-message"></div>
-            <button id="reset-button" class="reset-button">Reset Game</button>
+        <div class="sub-tab-bar">
+            <button class="sub-tab-button active" onclick="switchGame('chess-game')">Chess</button>
+            <button class="sub-tab-button" onclick="switchGame('hangman-game')">Hangman</button>
+        </div>
+
+        <!-- Chess Game Sub-section -->
+        <div id="chess-game" class="sub-content-section active">
+            <h2 class="text-xl font-bold text-white mb-4 text-center">Chess</h2>
+            <canvas id="chess-board-canvas"></canvas>
+            <div class="game-controls">
+                <div id="status" class="status-message"></div>
+                <button id="reset-button-chess" class="reset-button">Reset Game</button>
+            </div>
+        </div>
+
+        <!-- Hangman Game Sub-section -->
+        <div id="hangman-game" class="sub-content-section">
+            <div class="hangman-game-container">
+                <h2 class="text-xl font-bold text-white text-center">Hangman</h2>
+                <canvas id="hangman-canvas" width="300" height="300"></canvas>
+                <div id="word-display" class="word-display"></div>
+                <div id="hangman-status" class="status-message"></div>
+                <div id="guess-input" class="guess-input"></div>
+                <button id="reset-button-hangman" class="reset-button">New Word</button>
+            </div>
         </div>
 
         <hr class="w-1/2 my-8 border-t-2 border-gray-400">
 
+        <!-- Rock Paper Scissors Game (Kept as a separate section) -->
         <div class="rps-game-container">
             <h2>Rock Paper Scissors</h2>
             <div class="rps-choices">
@@ -343,6 +456,27 @@
             });
             document.getElementById(sectionId).classList.add('active');
             document.querySelector(`button[onclick="showSection('${sectionId}')"]`).classList.add('active');
+        };
+
+        // --- Sub-Game Switching Logic ---
+        window.switchGame = function(gameId) {
+            const sections = document.querySelectorAll('.sub-content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            const buttons = document.querySelectorAll('.sub-tab-button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+            document.getElementById(gameId).classList.add('active');
+            document.querySelector(`button[onclick="switchGame('${gameId}')"]`).classList.add('active');
+            
+            // Re-draw/init the game when switching to it
+            if (gameId === 'chess-game') {
+                resetChessGame();
+            } else if (gameId === 'hangman-game') {
+                resetHangmanGame();
+            }
         };
 
         // --- Daily Bible Verse Logic ---
@@ -432,28 +566,32 @@
         const verseIndex = dayOfYear % bibleVerses.length;
         verseContainer.textContent = bibleVerses[verseIndex];
 
-        // --- Chess Game Logic ---
-        const canvas = document.getElementById('chess-board-canvas');
-        const ctx = canvas.getContext('2d');
-        const statusDiv = document.getElementById('status');
-        const resetButton = document.getElementById('reset-button');
+        // --- Chess Game Logic (Player vs. Simple AI) ---
+        const chessCanvas = document.getElementById('chess-board-canvas');
+        const chessCtx = chessCanvas.getContext('2d');
+        const chessStatusDiv = document.getElementById('status');
+        const chessResetButton = document.getElementById('reset-button-chess');
+        
         let boardSize = Math.min(window.innerWidth * 0.8, window.innerHeight * 0.8, 600);
         let cellSize = boardSize / 8;
 
-        canvas.width = boardSize;
-        canvas.height = boardSize;
+        chessCanvas.width = boardSize;
+        chessCanvas.height = boardSize;
 
         let board = [];
         let currentPlayer = 'white';
         let selectedPiece = null;
         let selectedCell = null;
+        let isComputerThinking = false;
+        let highlightedMoves = [];
+        let chessGameActive = false;
 
         const pieceSymbols = {
             'wR': '♖', 'wN': '♘', 'wB': '♗', 'wQ': '♕', 'wK': '♔', 'wP': '♙',
             'bR': '♜', 'bN': '♞', 'bB': '♝', 'bQ': '♛', 'bK': '♚', 'bP': '♟︎'
         };
 
-        function resetGame() {
+        function resetChessGame() {
             // Initial board setup
             board = [
                 ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR'],
@@ -468,149 +606,540 @@
             currentPlayer = 'white';
             selectedPiece = null;
             selectedCell = null;
-            updateStatus('White to move.');
-            drawBoard();
+            isComputerThinking = false;
+            highlightedMoves = [];
+            chessGameActive = true;
+            updateChessStatus('White to move.');
+            drawChessBoard();
         }
 
-        function drawBoard() {
+        function drawChessBoard() {
             for (let row = 0; row < 8; row++) {
                 for (let col = 0; col < 8; col++) {
-                    ctx.fillStyle = (row + col) % 2 === 0 ? '#f0d2c2' : '#9b5d4f';
-                    ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+                    chessCtx.fillStyle = (row + col) % 2 === 0 ? '#f0d2c2' : '#9b5d4f';
+                    chessCtx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
                 }
             }
-            drawPieces();
+            drawHighlightedMoves();
+            drawChessPieces();
         }
 
-        function drawPieces() {
-            ctx.font = `${cellSize * 0.7}px serif`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
+        function drawHighlightedMoves() {
+            chessCtx.fillStyle = 'rgba(255, 255, 0, 0.5)';
+            highlightedMoves.forEach(move => {
+                chessCtx.fillRect(move.col * cellSize, move.row * cellSize, cellSize, cellSize);
+            });
+        }
+
+        function drawChessPieces() {
+            chessCtx.font = `${cellSize * 0.7}px serif`;
+            chessCtx.textAlign = 'center';
+            chessCtx.textBaseline = 'middle';
             for (let row = 0; row < 8; row++) {
                 for (let col = 0; col < 8; col++) {
                     const piece = board[row][col];
                     if (piece) {
                         const symbol = pieceSymbols[piece];
-                        ctx.fillStyle = piece.startsWith('w') ? 'white' : 'black';
-                        ctx.fillText(symbol, col * cellSize + cellSize / 2, row * cellSize + cellSize / 2);
+                        chessCtx.fillStyle = piece.startsWith('w') ? 'white' : 'black';
+                        chessCtx.fillText(symbol, col * cellSize + cellSize / 2, row * cellSize + cellSize / 2);
                     }
                 }
             }
         }
 
-        function updateStatus(message) {
-            statusDiv.textContent = message;
+        function updateChessStatus(message) {
+            chessStatusDiv.textContent = message;
         }
 
-        function onCanvasClick(event) {
-            const rect = canvas.getBoundingClientRect();
+        function onChessClick(event) {
+            if (isComputerThinking || currentPlayer !== 'white' || !chessGameActive) return;
+
+            const rect = chessCanvas.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
             const col = Math.floor(x / cellSize);
             const row = Math.floor(y / cellSize);
 
             if (selectedPiece === null) {
-                // No piece selected, try to select one
                 const piece = board[row][col];
-                if (piece && (piece.startsWith('w') && currentPlayer === 'white' || piece.startsWith('b') && currentPlayer === 'black')) {
+                if (piece && piece.startsWith('w')) {
                     selectedPiece = piece;
                     selectedCell = { row, col };
-                    updateStatus(`Selected ${selectedPiece}. Now select a destination.`);
+                    highlightedMoves = getValidMoves(selectedCell);
+                    drawChessBoard();
+                    updateChessStatus(`Selected ${selectedPiece}. Now select a destination.`);
                 }
             } else {
-                // A piece is selected, try to move it
-                if (isValidMove(selectedCell, { row, col })) {
-                    board[row][col] = selectedPiece;
+                const target = { row, col };
+                const moveIsValid = highlightedMoves.some(move => move.row === target.row && move.col === target.col);
+
+                if (moveIsValid) {
+                    board[target.row][target.col] = selectedPiece;
                     board[selectedCell.row][selectedCell.col] = null;
-                    currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
+                    
+                    // Check for pawn promotion
+                    if (selectedPiece === 'wP' && target.row === 0) {
+                        board[target.row][target.col] = 'wQ';
+                    }
+
                     selectedPiece = null;
                     selectedCell = null;
-                    updateStatus(`${currentPlayer === 'white' ? 'White' : 'Black'} to move.`);
-                } else {
-                    updateStatus('Invalid move. Try again.');
-                }
-                selectedPiece = null;
-                selectedCell = null;
-            }
-            drawBoard();
-        }
-        
-        // This is a simplified move validation for a playable demo, not a full chess engine.
-        function isValidMove(from, to) {
-            const piece = board[from.row][from.col];
-            if (!piece) return false;
-
-            const dx = Math.abs(to.col - from.col);
-            const dy = Math.abs(to.row - from.row);
-            const pieceType = piece.substring(1);
-
-            switch (pieceType) {
-                case 'P': // Pawn
-                    const direction = piece.startsWith('w') ? -1 : 1;
-                    const startRow = piece.startsWith('w') ? 6 : 1;
+                    highlightedMoves = [];
+                    drawChessBoard();
                     
-                    // Simple forward move
-                    if (to.col === from.col && board[to.row][to.col] === null) {
-                        if (dy === 1) return true;
-                        // Initial two-square move
-                        if (from.row === startRow && dy === 2 && board[from.row + direction][from.col] === null) return true;
+                    if (checkForGameOver()) {
+                        return;
                     }
-                    // Simple capture
-                    if (dx === 1 && dy === 1 && board[to.row][to.col] !== null) {
-                        return true;
+
+                    currentPlayer = 'black';
+                    updateChessStatus('Black to move.');
+                    setTimeout(computerMove, 500);
+                } else {
+                    // Deselect or select a new piece
+                    const newPiece = board[row][col];
+                    if (newPiece && newPiece.startsWith('w')) {
+                        selectedPiece = newPiece;
+                        selectedCell = { row, col };
+                        highlightedMoves = getValidMoves(selectedCell);
+                        drawChessBoard();
+                        updateChessStatus(`Selected ${selectedPiece}. Now select a destination.`);
+                    } else {
+                        selectedPiece = null;
+                        selectedCell = null;
+                        highlightedMoves = [];
+                        drawChessBoard();
+                        updateChessStatus('Invalid move. White to move.');
                     }
-                    return false;
-                case 'R': // Rook
-                    if (dx === 0 || dy === 0) return true;
-                    return false;
-                case 'N': // Knight
-                    if ((dx === 1 && dy === 2) || (dx === 2 && dy === 1)) return true;
-                    return false;
-                case 'B': // Bishop
-                    if (dx === dy) return true;
-                    return false;
-                case 'Q': // Queen
-                    if (dx === dy || dx === 0 || dy === 0) return true;
-                    return false;
-                case 'K': // King
-                    if (dx <= 1 && dy <= 1) return true;
-                    return false;
-                default:
-                    return false;
+                }
             }
         }
 
-        canvas.addEventListener('click', onCanvasClick);
-        resetButton.addEventListener('click', resetGame);
+        function getValidMoves(cell) {
+            const piece = board[cell.row][cell.col];
+            if (!piece) return [];
+            
+            const moves = [];
+            const pieceType = piece.substring(1);
+            const player = piece.startsWith('w') ? 'white' : 'black';
+            const opponent = player === 'white' ? 'black' : 'white';
+
+            // Function to check if a cell is on the board and not occupied by a friendly piece
+            function isValidTarget(row, col) {
+                if (row < 0 || row >= 8 || col < 0 || col >= 8) return false;
+                const targetPiece = board[row][col];
+                if (targetPiece && targetPiece.startsWith(player === 'white' ? 'w' : 'b')) return false;
+                return true;
+            }
+            
+            // Function to add moves along a single direction until an obstacle is hit
+            function checkLine(dRow, dCol) {
+                let r = cell.row + dRow;
+                let c = cell.col + dCol;
+                while (isValidTarget(r, c)) {
+                    moves.push({ row: r, col: c });
+                    if (board[r][c]) break; // Stop if we hit an opponent's piece
+                    r += dRow;
+                    c += dCol;
+                }
+            }
+
+            // Move logic for each piece type
+            switch (pieceType) {
+                case 'P':
+                    const direction = player === 'white' ? -1 : 1;
+                    const startRow = player === 'white' ? 6 : 1;
+
+                    // Forward move
+                    if (!board[cell.row + direction][cell.col]) {
+                        moves.push({ row: cell.row + direction, col: cell.col });
+                        // Double move on first turn
+                        if (cell.row === startRow && !board[cell.row + 2 * direction][cell.col]) {
+                            moves.push({ row: cell.row + 2 * direction, col: cell.col });
+                        }
+                    }
+                    // Captures
+                    if (isValidTarget(cell.row + direction, cell.col - 1) && board[cell.row + direction][cell.col - 1]) {
+                        if (board[cell.row + direction][cell.col - 1].startsWith(opponent.charAt(0))) {
+                            moves.push({ row: cell.row + direction, col: cell.col - 1 });
+                        }
+                    }
+                    if (isValidTarget(cell.row + direction, cell.col + 1) && board[cell.row + direction][cell.col + 1]) {
+                        if (board[cell.row + direction][cell.col + 1].startsWith(opponent.charAt(0))) {
+                            moves.push({ row: cell.row + direction, col: cell.col + 1 });
+                        }
+                    }
+                    break;
+                case 'R':
+                    checkLine(1, 0); checkLine(-1, 0); checkLine(0, 1); checkLine(0, -1);
+                    break;
+                case 'N':
+                    const knightMoves = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, 2], [1, -2], [-1, 2], [-1, -2]];
+                    knightMoves.forEach(move => {
+                        const newRow = cell.row + move[0];
+                        const newCol = cell.col + move[1];
+                        if (isValidTarget(newRow, newCol)) moves.push({ row: newRow, col: newCol });
+                    });
+                    break;
+                case 'B':
+                    checkLine(1, 1); checkLine(1, -1); checkLine(-1, 1); checkLine(-1, -1);
+                    break;
+                case 'Q':
+                    checkLine(1, 0); checkLine(-1, 0); checkLine(0, 1); checkLine(0, -1);
+                    checkLine(1, 1); checkLine(1, -1); checkLine(-1, 1); checkLine(-1, -1);
+                    break;
+                case 'K':
+                    const kingMoves = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]];
+                    kingMoves.forEach(move => {
+                        const newRow = cell.row + move[0];
+                        const newCol = cell.col + move[1];
+                        if (isValidTarget(newRow, newCol)) moves.push({ row: newRow, col: newCol });
+                    });
+                    break;
+            }
+
+            return moves;
+        }
         
-        // --- Rock Paper Scissors Logic ---
-        window.playRPS = function(userChoice) {
+        function computerMove() {
+            isComputerThinking = true;
+            const blackPieces = [];
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r][c];
+                    if (piece && piece.startsWith('b')) {
+                        blackPieces.push({ piece, row: r, col: c });
+                    }
+                }
+            }
+
+            let bestMove = null;
+            let bestScore = -Infinity;
+
+            // Simple Minimax-like AI: Find the move that captures the highest value piece
+            blackPieces.forEach(start => {
+                const moves = getValidMoves(start);
+                moves.forEach(end => {
+                    const capturedPiece = board[end.row][end.col];
+                    let score = 0;
+                    if (capturedPiece) {
+                        score = getPieceValue(capturedPiece);
+                    }
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove = { start, end };
+                    }
+                });
+            });
+
+            // If no captures are possible, just make a random valid move
+            if (bestMove === null) {
+                let allMoves = [];
+                blackPieces.forEach(start => {
+                    const moves = getValidMoves(start);
+                    moves.forEach(end => {
+                        allMoves.push({ start, end });
+                    });
+                });
+
+                if (allMoves.length > 0) {
+                    const randomMove = allMoves[Math.floor(Math.random() * allMoves.length)];
+                    bestMove = randomMove;
+                }
+            }
+
+            if (bestMove) {
+                const startCell = bestMove.start;
+                const endCell = bestMove.end;
+                const pieceToMove = board[startCell.row][startCell.col];
+                
+                board[endCell.row][endCell.col] = pieceToMove;
+                board[startCell.row][startCell.col] = null;
+
+                // Check for pawn promotion
+                if (pieceToMove === 'bP' && endCell.row === 7) {
+                    board[endCell.row][endCell.col] = 'bQ';
+                }
+
+                drawChessBoard();
+
+                if (checkForGameOver()) {
+                    isComputerThinking = false;
+                    return;
+                }
+
+                currentPlayer = 'white';
+                updateChessStatus('White to move.');
+            } else {
+                updateChessStatus("Stalemate or checkmate. Game Over.");
+                chessGameActive = false;
+            }
+            isComputerThinking = false;
+        }
+
+        // Simple piece values for the AI
+        function getPieceValue(piece) {
+            switch (piece.substring(1)) {
+                case 'P': return 10;
+                case 'N': return 30;
+                case 'B': return 30;
+                case 'R': return 50;
+                case 'Q': return 90;
+                case 'K': return 900;
+                default: return 0;
+            }
+        }
+
+        function checkForGameOver() {
+            let whiteKingFound = false;
+            let blackKingFound = false;
+
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r][c];
+                    if (piece === 'wK') whiteKingFound = true;
+                    if (piece === 'bK') blackKingFound = true;
+                }
+            }
+
+            if (!whiteKingFound) {
+                updateChessStatus('Game Over! Black wins!');
+                chessGameActive = false;
+                return true;
+            }
+            if (!blackKingFound) {
+                updateChessStatus('Game Over! White wins!');
+                chessGameActive = false;
+                return true;
+            }
+
+            return false;
+        }
+
+        // Event listeners
+        chessCanvas.addEventListener('mousedown', onChessClick);
+        chessResetButton.addEventListener('click', resetChessGame);
+
+        // Resize handler for responsiveness
+        window.addEventListener('resize', () => {
+            if (document.getElementById('chess-game').classList.contains('active')) {
+                boardSize = Math.min(window.innerWidth * 0.8, window.innerHeight * 0.8, 600);
+                cellSize = boardSize / 8;
+                chessCanvas.width = boardSize;
+                chessCanvas.height = boardSize;
+                drawChessBoard();
+            }
+        });
+
+        // --- Hangman Game Logic ---
+        const hangmanCanvas = document.getElementById('hangman-canvas');
+        const hangmanCtx = hangmanCanvas.getContext('2d');
+        const hangmanWordDisplay = document.getElementById('word-display');
+        const hangmanStatus = document.getElementById('hangman-status');
+        const hangmanGuessInput = document.getElementById('guess-input');
+        const hangmanResetButton = document.getElementById('reset-button-hangman');
+
+        let words = ['JESUS', 'BIBLE', 'PRAYER', 'FAITH', 'HOPE', 'LOVE', 'GRACE', 'MERCY', 'SPIRIT', 'REDEMPTION'];
+        let secretWord;
+        let guessedLetters;
+        let mistakes;
+        const maxMistakes = 7;
+        let hangmanGameActive = false;
+
+        function resetHangmanGame() {
+            secretWord = words[Math.floor(Math.random() * words.length)];
+            guessedLetters = new Set();
+            mistakes = 0;
+            hangmanGameActive = true;
+            drawHangman();
+            updateWordDisplay();
+            generateLetterButtons();
+            hangmanStatus.textContent = 'Guess a letter!';
+        }
+
+        function drawHangman() {
+            hangmanCtx.clearRect(0, 0, hangmanCanvas.width, hangmanCanvas.height);
+            hangmanCtx.strokeStyle = '#c9302c'; // Darker red for gallows
+            hangmanCtx.lineWidth = 4;
+            hangmanCtx.lineCap = 'round';
+
+            // Base
+            hangmanCtx.beginPath();
+            hangmanCtx.moveTo(20, hangmanCanvas.height - 20);
+            hangmanCtx.lineTo(hangmanCanvas.width - 20, hangmanCanvas.height - 20);
+            hangmanCtx.stroke();
+
+            // Post
+            hangmanCtx.beginPath();
+            hangmanCtx.moveTo(80, hangmanCanvas.height - 20);
+            hangmanCtx.lineTo(80, 20);
+            hangmanCtx.stroke();
+            
+            // Top beam
+            hangmanCtx.beginPath();
+            hangmanCtx.moveTo(80, 20);
+            hangmanCtx.lineTo(200, 20);
+            hangmanCtx.stroke();
+
+            // Rope
+            hangmanCtx.beginPath();
+            hangmanCtx.moveTo(200, 20);
+            hangmanCtx.lineTo(200, 50);
+            hangmanCtx.stroke();
+
+            if (mistakes > 0) {
+                // Head
+                hangmanCtx.beginPath();
+                hangmanCtx.arc(200, 80, 30, 0, Math.PI * 2);
+                hangmanCtx.stroke();
+            }
+            if (mistakes > 1) {
+                // Body
+                hangmanCtx.beginPath();
+                hangmanCtx.moveTo(200, 110);
+                hangmanCtx.lineTo(200, 200);
+                hangmanCtx.stroke();
+            }
+            if (mistakes > 2) {
+                // Left arm
+                hangmanCtx.beginPath();
+                hangmanCtx.moveTo(200, 120);
+                hangmanCtx.lineTo(150, 150);
+                hangmanCtx.stroke();
+            }
+            if (mistakes > 3) {
+                // Right arm
+                hangmanCtx.beginPath();
+                hangmanCtx.moveTo(200, 120);
+                hangmanCtx.lineTo(250, 150);
+                hangmanCtx.stroke();
+            }
+            if (mistakes > 4) {
+                // Left leg
+                hangmanCtx.beginPath();
+                hangmanCtx.moveTo(200, 200);
+                hangmanCtx.lineTo(170, 250);
+                hangmanCtx.stroke();
+            }
+            if (mistakes > 5) {
+                // Right leg
+                hangmanCtx.beginPath();
+                hangmanCtx.moveTo(200, 200);
+                hangmanCtx.lineTo(230, 250);
+                hangmanCtx.stroke();
+            }
+            if (mistakes > 6) {
+                // Crying face
+                hangmanCtx.strokeStyle = '#c9302c';
+                hangmanCtx.beginPath();
+                hangmanCtx.arc(190, 75, 2, 0, Math.PI * 2);
+                hangmanCtx.fill();
+                hangmanCtx.beginPath();
+                hangmanCtx.arc(210, 75, 2, 0, Math.PI * 2);
+                hangmanCtx.fill();
+                hangmanCtx.beginPath();
+                hangmanCtx.arc(200, 95, 5, 0, Math.PI, false);
+                hangmanCtx.stroke();
+            }
+        }
+
+        function updateWordDisplay() {
+            let displayWord = '';
+            for (const letter of secretWord) {
+                if (guessedLetters.has(letter)) {
+                    displayWord += letter + ' ';
+                } else {
+                    displayWord += '_ ';
+                }
+            }
+            hangmanWordDisplay.textContent = displayWord.trim();
+        }
+
+        function generateLetterButtons() {
+            hangmanGuessInput.innerHTML = '';
+            for (let i = 65; i <= 90; i++) {
+                const letter = String.fromCharCode(i);
+                const button = document.createElement('button');
+                button.textContent = letter;
+                button.classList.add('letter-button');
+                button.addEventListener('click', () => handleGuess(letter));
+                hangmanGuessInput.appendChild(button);
+            }
+        }
+
+        function handleGuess(letter) {
+            if (!hangmanGameActive) return;
+
+            // Disable the button
+            const button = Array.from(hangmanGuessInput.children).find(btn => btn.textContent === letter);
+            if (button) button.disabled = true;
+
+            if (secretWord.includes(letter)) {
+                guessedLetters.add(letter);
+                updateWordDisplay();
+                hangmanStatus.textContent = 'Correct!';
+                checkWinLoss();
+            } else {
+                mistakes++;
+                drawHangman();
+                hangmanStatus.textContent = `Incorrect! You have ${maxMistakes - mistakes} guesses left.`;
+                checkWinLoss();
+            }
+        }
+
+        function checkWinLoss() {
+            if (mistakes >= maxMistakes) {
+                hangmanStatus.textContent = `You lose! The word was ${secretWord}.`;
+                hangmanGameActive = false;
+                disableButtons();
+            } else if (isWordGuessed()) {
+                hangmanStatus.textContent = `You win! The word was ${secretWord}.`;
+                hangmanGameActive = false;
+                disableButtons();
+            }
+        }
+
+        function isWordGuessed() {
+            for (const letter of secretWord) {
+                if (!guessedLetters.has(letter)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function disableButtons() {
+            Array.from(hangmanGuessInput.children).forEach(button => {
+                button.disabled = true;
+            });
+        }
+
+        hangmanResetButton.addEventListener('click', resetHangmanGame);
+
+        // --- Rock Paper Scissors Game Logic ---
+        window.playRPS = function(playerChoice) {
             const choices = ['rock', 'paper', 'scissors'];
             const computerChoice = choices[Math.floor(Math.random() * choices.length)];
-            const rpsResult = document.getElementById('rps-result');
 
-            let resultMessage = `You chose ${userChoice}. The computer chose ${computerChoice}. `;
-            
-            if (userChoice === computerChoice) {
-                resultMessage += "It's a tie!";
+            let result;
+            if (playerChoice === computerChoice) {
+                result = "It's a tie!";
             } else if (
-                (userChoice === 'rock' && computerChoice === 'scissors') ||
-                (userChoice === 'paper' && computerChoice === 'rock') ||
-                (userChoice === 'scissors' && computerChoice === 'paper')
+                (playerChoice === 'rock' && computerChoice === 'scissors') ||
+                (playerChoice === 'paper' && computerChoice === 'rock') ||
+                (playerChoice === 'scissors' && computerChoice === 'paper')
             ) {
-                resultMessage += "You win!";
+                result = `You win! ${playerChoice} beats ${computerChoice}.`;
             } else {
-                resultMessage += "You lose!";
+                result = `You lose! ${computerChoice} beats ${playerChoice}.`;
             }
-            rpsResult.textContent = resultMessage;
+
+            document.getElementById('rps-result').textContent = result;
         };
 
-        // Initialize the app on page load
-        showSection('main-content');
-        resetGame();
-
+        // Initialize the first game
+        resetChessGame();
+        resetHangmanGame();
     });
 </script>
-
 </body>
 </html>
