@@ -3,847 +3,614 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DocArtAtlier</title>
-    <!-- React and ReactDOM from CDN -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Tailwind CSS from CDN -->
+    <title>Welcome to DocAtlier</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts for graffiti style -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
-    <script>
-      // Configure Tailwind to use JIT mode for faster compilation
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              graffiti: ['Permanent Marker', 'cursive']
-            },
-          },
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #d9534f; /* Changed background to red */
+            color: white; /* Changed all text to white */
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-      }
-    </script>
-    <!-- Lucide React icons, converted to a self-contained script -->
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+        .app-container {
+            background-color: #c9302c; /* A slightly darker red for the container */
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 2.5rem;
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .main-title {
+            font-family: 'Bungee', cursive;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white; /* Ensures title is white */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .tab-bar {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            border: none;
+            background-color: #2e6097;
+            color: #ffffff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .tab-button:hover {
+            background-color: #3b76b2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .tab-button.active {
+            background-color: #4b90e0;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .tab-button:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: all 0.6s ease;
+            border-radius: 50%;
+            z-index: -1;
+            transform: translate(-50%, -50%) scale(0);
+        }
+
+        .tab-button:hover:before {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .content-section {
+            display: none;
+            width: 100%;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Chess Board Styling */
+        #chess-board-canvas {
+            border-radius: 0.75rem;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+            max-width: 100%;
+            height: auto;
+            background-color: #d9534f;
+            border: 2px solid #c9302c;
+        }
+
+        .game-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .status-message {
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-align: center;
+            color: white;
+            min-height: 25px;
+        }
+
+        .reset-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            background-color: #d9534f;
+            color: white;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .reset-button:hover {
+            background-color: #c9302c;
+            transform: translateY(-2px);
+        }
+
+        .section-content {
+            background-color: #1a2e47;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        .section-content h2 {
+            font-size: 1.75rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: white; /* Ensures headings are white */
+        }
+        .section-content p, .section-content li {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: white; /* Ensures text is white */
+        }
+        .section-content ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 1rem;
+        }
+        .section-content a {
+            color: #6a9bd8;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+        .section-content a:hover {
+            color: #a0c4f8;
+        }
+        .purpose-text {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* New styles for Rock Paper Scissors */
+        .rps-game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            background-color: #1a2e47;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+            width: 100%;
+        }
+
+        .rps-game-container h2 {
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .rps-choices {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .rps-choices button {
+            padding: 1rem;
+            font-size: 2rem;
+            border-radius: 0.75rem;
+            background-color: #3b76b2;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .rps-choices button:hover {
+            transform: scale(1.1);
+            background-color: #4b90e0;
+        }
+
+        .rps-result {
+            font-size: 1.25rem;
+            font-weight: 600;
+            min-height: 50px;
+            text-align: center;
+        }
+        
+        .daily-verse-container {
+            background-color: #1a2e47;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            margin-top: 2rem;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .daily-verse-container h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+        
+        .daily-verse-text {
+            font-style: italic;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: white;
+        }
+        
+    </style>
 </head>
-<body class="bg-sky-200 antialiased font-sans">
-    <div id="root"></div>
+<body>
 
-    <script type="text/javascript">
-        // All of your React code goes here within this script tag
-        const { useState, useEffect, createElement: e } = React;
-        const { createRoot } = ReactDOM;
+<div class="app-container">
+    <h1 class="main-title">Welcome to DocAtlier</h1>
 
-        // Helper function for creating elements with class names
-        const c = (type, props, ...children) => e(type, props, ...children);
+    <div class="tab-bar">
+        <button class="tab-button active" onclick="showSection('main-content')">Home</button>
+        <button class="tab-button" onclick="showSection('games-content')">Games</button>
+        <button class="tab-button" onclick="showSection('ebooks-content')">Ebooks</button>
+        <button class="tab-button" onclick="showSection('purpose-content')">Purpose</button>
+    </div>
 
-        // Convert Lucide icons to React components
-        const lucideIcons = lucide.icons;
-        const BookA = () => c('span', { dangerouslySetInnerHTML: { __html: lucide.createIcons.BookA } });
-        const Laugh = () => c('span', { dangerouslySetInnerHTML: { __html: lucide.createIcons.Laugh } });
-        const Book = () => c('span', { dangerouslySetInnerHTML: { __html: lucide.createIcons.Book } });
-        const Gamepad = () => c('span', { dangerouslySetInnerHTML: { __html: lucide.createIcons.Gamepad } });
-        const Handshake = () => c('span', { dangerouslySetInnerHTML: { __html: lucide.createIcons.Handshake } });
-        const icons = { BookA, Laugh, Book, Gamepad, Handshake };
+    <!-- Main Content Section -->
+    <div id="main-content" class="content-section active">
+        <div class="daily-verse-container">
+            <h3>Verse for Today</h3>
+            <p id="daily-verse" class="daily-verse-text">Loading...</p>
+        </div>
+        <p class="mt-4 text-center text-white">
+            Hello, and welcome to DocAtlier! We're glad you're here. Check out our different sections to play some games and learn more about our purpose!
+        </p>
+    </div>
 
-        // --- Data for the app ---
+    <!-- Games Section -->
+    <div id="games-content" class="content-section">
+        <h2 class="text-xl font-bold text-white mb-4 text-center">Chess</h2>
+        <canvas id="chess-board-canvas"></canvas>
+        <div class="game-controls">
+            <div id="status" class="status-message"></div>
+            <button id="reset-button" class="reset-button">Reset Game</button>
+        </div>
+
+        <hr class="w-1/2 my-8 border-t-2 border-gray-400">
+
+        <div class="rps-game-container">
+            <h2>Rock Paper Scissors</h2>
+            <div class="rps-choices">
+                <button onclick="playRPS('rock')">✊</button>
+                <button onclick="playRPS('paper')">✋</button>
+                <button onclick="playRPS('scissors')">✌️</button>
+            </div>
+            <div id="rps-result" class="rps-result text-white"></div>
+        </div>
+    </div>
+
+    <!-- Ebooks Section -->
+    <div id="ebooks-content" class="content-section section-content">
+        <h2>Ebooks & Resources</h2>
+        <p>This is where we will showcase our valuable ebooks and digital resources for you to enjoy and learn from. Coming soon!</p>
+        <div class="mt-4">
+            <p><strong>Detroit Sentinels:</strong> <a href="https://drive.google.com/file/d/1XLJLVBCd1DkLJgDgmwlhZOMzyZly0rb9/view?usp=sharing" target="_blank">View Here</a></p>
+            <p>If you'd like to support our mission, you can make a donation:</p>
+            <p><strong>PayPal:</strong> <a href="https://www.paypal.com/paypalme/DenzelNewson93" target="_blank">@DenzelNewson93</a></p>
+        </div>
+    </div>
+
+    <!-- Purpose Section -->
+    <div id="purpose-content" class="content-section section-content">
+        <h2>Our Purpose</h2>
+        <p class="purpose-text">
+            Our purpose is simple. The enemy is trying to warp our kids by pushing wickedness and toxicity through content, platforms, and the culture and we are going to protect them by pushing God and positivity with our lives, actions and platforms. It is time to take territory.
+        </p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Tab Switching Logic ---
+        window.showSection = function(sectionId) {
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            document.querySelector(`button[onclick="showSection('${sectionId}')"]`).classList.add('active');
+        };
+
+        // --- Daily Bible Verse Logic ---
         const bibleVerses = [
-            { text: "For God so loved the world, that he gave his only Son, that whoever believes in him should not perish but have eternal life.", citation: "John 3:16" },
-            { text: "The Lord is my shepherd; I shall not want.", citation: "Psalm 23:1" },
-            { text: "I can do all things through him who strengthens me.", citation: "Philippians 4:13" },
-            { text: "In the beginning was the Word, and the Word was with God, and the Word was God.", citation: "John 1:1" },
-            { text: "The steadfast love of the Lord never ceases; his mercies never come to an end; they are new every morning; great is your faithfulness.", citation: "Lamentations 3:22-23" },
-            { text: "Trust in the Lord with all your heart, and do not lean on your own understanding.", citation: "Proverbs 3:5" },
-            { text: "So do not fear, for I am with you; do not be dismayed, for I am your God. I will strengthen you and help you; I will uphold you with my righteous right hand.", citation: "Isaiah 41:10" },
-            { text: "But the fruit of the Spirit is love, joy, peace, patience, kindness, goodness, faithfulness, gentleness, self-control; against such things there is no law.", citation: "Galatians 5:22-23" },
-            { text: "For where two or three are gathered in my name, there am I among them.", citation: "Matthew 18:20" },
-            { text: "And we know that in all things God works for the good of those who love him, who have been called according to his purpose.", citation: "Romans 8:28" },
-            { text: "I have stored up your word in my heart, that I might not sin against you.", citation: "Psalm 119:11" },
-            { text: "Come to me, all who labor and are heavy laden, and I will give you rest.", citation: "Matthew 11:28" },
-            { text: "Therefore, if anyone is in Christ, he is a new creation. The old has passed away; behold, the new has come.", citation: "2 Corinthians 5:17" },
-            { text: "Be kind to one another, tenderhearted, forgiving one another, as God in Christ forgave you.", citation: "Ephesians 4:32" },
-            { text: "Casting all your anxieties on him, because he cares for you.", citation: "1 Peter 5:7" },
+            "Genesis 1:1 - In the beginning God created the heavens and the earth.",
+            "Genesis 2:7 - And the LORD God formed man of the dust of the ground, and breathed into his nostrils the breath of life; and man became a living soul.",
+            "Genesis 6:14 - Make thee an ark of gopher wood; rooms shalt thou make in the ark, and shalt pitch it within and without with pitch.",
+            "Genesis 9:13 - I do set my bow in the cloud, and it shall be for a token of a covenant between me and the earth.",
+            "Exodus 3:14 - And God said unto Moses, I AM THAT I AM: and he said, Thus shalt thou say unto the children of Israel, I AM hath sent me unto you.",
+            "Exodus 14:14 - The LORD shall fight for you, and ye shall hold your peace.",
+            "Leviticus 19:18 - ...thou shalt love thy neighbour as thyself: I am the LORD.",
+            "Numbers 6:24-26 - The LORD bless thee, and keep thee: The LORD make his face shine upon thee, and be gracious unto thee: The LORD lift up his countenance upon thee, and give thee peace.",
+            "Deuteronomy 6:5 - And thou shalt love the LORD thy God with all thine heart, and with all thy soul, and with all thy might.",
+            "Joshua 1:9 - Be strong and of a good courage; be not afraid, neither be thou dismayed: for the LORD thy God is with thee whithersoever thou goest.",
+            "Judges 6:12 - And the angel of the LORD appeared unto him, and said unto him, The LORD is with thee, thou mighty man of valour.",
+            "Ruth 1:16 - But Ruth said, Intreat me not to leave thee, or to return from following after thee: for whither thou goest, I will go; and where thou lodgest, I will lodge: thy people shall be my people, and thy God my God.",
+            "1 Samuel 16:7 - ...for the LORD seeth not as man seeth; for man looketh on the outward appearance, but the LORD looketh on the heart.",
+            "2 Samuel 7:22 - Wherefore thou art great, O LORD God: for there is none like thee, neither is there any God beside thee, according to all that we have heard with our ears.",
+            "1 Kings 3:9 - Give therefore thy servant an understanding heart to judge thy people, that I may discern between good and bad: for who is able to judge this thy so great a people?",
+            "2 Kings 20:5 - ...I have heard thy prayer, I have seen thy tears: behold, I will heal thee...",
+            "1 Chronicles 16:11 - Seek the LORD and his strength, seek his face continually.",
+            "2 Chronicles 7:14 - If my people, which are called by my name, shall humble themselves, and pray, and seek my face, and turn from their wicked ways; then will I hear from heaven, and will forgive their sin, and will heal their land.",
+            "Ezra 8:23 - So we fasted and besought our God for this: and he was intreated of us.",
+            "Nehemiah 8:10 - ...for the joy of the LORD is your strength.",
+            "Esther 4:14 - ...and who knoweth whether thou art come to the kingdom for such a time as this?",
+            "Job 19:25 - For I know that my redeemer liveth, and that he shall stand at the latter day upon the earth:",
+            "Psalm 23:1 - The LORD is my shepherd; I shall not want.",
+            "Psalm 46:1 - God is our refuge and strength, a very present help in trouble.",
+            "Psalm 100:4 - Enter into his gates with thanksgiving, and into his courts with praise: be thankful unto him, and bless his name.",
+            "Proverbs 3:5-6 - Trust in the LORD with all thine heart; and lean not unto thine own understanding. In all thy ways acknowledge him, and he shall direct thy paths.",
+            "Ecclesiastes 3:1 - To every thing there is a season, and a time to every purpose under the heaven:",
+            "Isaiah 40:31 - But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint.",
+            "Jeremiah 29:11 - For I know the thoughts that I think toward you, saith the LORD, thoughts of peace, and not of evil, to give you an expected end.",
+            "Lamentations 3:22-23 - It is of the LORD'S mercies that we are not consumed, because his compassions fail not. They are new every morning: great is thy faithfulness.",
+            "Ezekiel 36:26 - A new heart also will I give you, and a new spirit will I put within you: and I will take away the stony heart out of your flesh, and I will give you an heart of flesh.",
+            "Daniel 6:23 - Then was the king exceeding glad for him, and commanded that they should take Daniel up out of the den. So Daniel was taken up out of the den, and no manner of hurt was found upon him, because he believed in his God.",
+            "Hosea 6:3 - Then shall we know, if we follow on to know the LORD: his going forth is prepared as the morning; and he shall come unto us as the rain, as the latter and former rain unto the earth.",
+            "Joel 2:25 - And I will restore to you the years that the locust hath eaten, the cankerworm, and the caterpiller, and the palmerworm, my great army which I sent among you.",
+            "Amos 5:24 - But let judgment run down as waters, and righteousness as a mighty stream.",
+            "Obadiah 1:3 - The pride of thine heart hath deceived thee, thou that dwellest in the clefts of the rock, whose habitation is high; that saith in his heart, Who shall bring me down to the ground?",
+            "Jonah 2:2 - And said, I cried by reason of mine affliction unto the LORD, and he heard me; out of the belly of hell cried I, and thou heardest my voice.",
+            "Micah 6:8 - He hath shewed thee, O man, what is good; and what doth the LORD require of thee, but to do justly, and to love mercy, and to walk humbly with thy God?",
+            "Nahum 1:7 - The LORD is good, a strong hold in the day of trouble; and he knoweth them that trust in him.",
+            "Habakkuk 3:19 - The LORD God is my strength, and he will make my feet like hinds' feet, and he will make me to walk upon mine high places.",
+            "Zephaniah 3:17 - The LORD thy God in the midst of thee is mighty; he will save, he will rejoice over thee with joy; he will rest in his love, he will joy over thee with singing.",
+            "Haggai 2:9 - The glory of this latter house shall be greater than of the former, saith the LORD of hosts: and in this place will I give peace, saith the LORD of hosts.",
+            "Zechariah 4:6 - Then he answered and spake unto me, saying, This is the word of the LORD unto Zerubbabel, saying, Not by might, nor by power, but by my spirit, saith the LORD of hosts.",
+            "Malachi 3:10 - Bring ye all the tithes into the storehouse, that there may be meat in mine house, and prove me now herewith, saith the LORD of hosts, if I will not open you the windows of heaven, and pour you out a blessing, that there shall not be room enough to receive it.",
+            "Matthew 6:33 - But seek ye first the kingdom of God, and his righteousness; and all these things shall be added unto you.",
+            "Mark 10:27 - And Jesus looking upon them saith, With men it is impossible, but not with God: for with God all things are possible.",
+            "Luke 1:37 - For with God nothing shall be impossible.",
+            "John 3:16 - For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.",
+            "Acts 1:8 - But ye shall receive power, after that the Holy Ghost is come upon you: and ye shall be witnesses unto me both in Jerusalem, and in all Judaea, and in Samaria, and unto the uttermost part of the earth.",
+            "Romans 8:28 - And we know that all things work together for good to them that love God, to them who are the called according to his purpose.",
+            "1 Corinthians 13:4-7 - Charity suffereth long, and is kind; charity envieth not; charity vaunteth not itself, is not puffed up, doth not behave itself unseemly, seeketh not her own, is not easily provoked, thinketh no evil; rejoiceth not in iniquity, but rejoiceth in the truth; beareth all things, believeth all things, hopeth all things, endureth all things.",
+            "2 Corinthians 5:17 - Therefore if any man be in Christ, he is a new creature: old things are passed away; behold, all things are become new.",
+            "Galatians 5:22-23 - But the fruit of the Spirit is love, joy, peace, longsuffering, gentleness, goodness, faith, meekness, temperance: against such there is no law.",
+            "Ephesians 2:8-9 - For by grace are ye saved through faith; and that not of yourselves: it is the gift of God: not of works, lest any man should boast.",
+            "Philippians 4:13 - I can do all things through Christ which strengtheneth me.",
+            "Colossians 3:23 - And whatsoever ye do, do it heartily, as to the Lord, and not unto men;",
+            "1 Thessalonians 5:17 - Pray without ceasing.",
+            "2 Thessalonians 3:3 - But the Lord is faithful, who shall stablish you, and keep you from evil.",
+            "1 Timothy 4:12 - Let no man despise thy youth; but be thou an example of the believers, in word, in conversation, in charity, in spirit, in faith, in purity.",
+            "2 Timothy 1:7 - For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind.",
+            "Titus 3:5 - Not by works of righteousness which we have done, but according to his mercy he saved us, by the washing of regeneration, and renewing of the Holy Ghost;",
+            "Philemon 1:6 - That the communication of thy faith may become effectual by the acknowledging of every good thing which is in you in Christ Jesus.",
+            "Hebrews 11:1 - Now faith is the substance of things hoped for, the evidence of things not seen.",
+            "James 1:5 - If any of you lack wisdom, let him ask of God, that giveth to all men liberally, and upbraideth not; and it shall be given him.",
+            "1 Peter 5:7 - Casting all your care upon him; for he careth for you.",
+            "2 Peter 3:9 - The Lord is not slack concerning his promise, as some men count slackness; but is longsuffering to us-ward, not willing that any should perish, but that all should come to repentance.",
+            "1 John 4:7 - Beloved, let us love one another: for love is of God; and every one that loveth is born of God, and knoweth God.",
+            "2 John 1:6 - And this is love, that we walk after his commandments. This is the commandment, That, as ye have heard from the beginning, ye should walk in it.",
+            "3 John 1:4 - I have no greater joy than to hear that my children walk in truth.",
+            "Jude 1:24-25 - Now unto him that is able to keep you from falling, and to present you faultless before the presence of his glory with exceeding joy, to the only wise God our Saviour, be glory and majesty, dominion and power, both now and ever. Amen.",
+            "Revelation 3:20 - Behold, I stand at the door, and knock: if any man hear my voice, and open the door, I will come in to him, and will sup with him, and he with me.",
+            "And many more verses to come!"
         ];
         
-        const dadJokes = [
-            "I'm afraid for the calendar. Its days are numbered.",
-            "What do you call a fake noodle? An Impasta.",
-            "I would tell you a joke about an apple, but it's not a very good one.",
-            "Why don't scientists trust atoms? Because they make up everything!",
-            "I'm reading a book on anti-gravity. It's impossible to put down!",
-            "Did you hear about the restaurant on the moon? Great food, no atmosphere.",
-            "Why did the scarecrow win an award? Because he was outstanding in his field!",
-            "I'm on a seafood diet. I see food, and I eat it.",
-            "What do you call a belt made of watches? A waist of time.",
-            "What do you get when you cross a snowman and a vampire? Frostbite.",
-            "Why don't skeletons fight each other? They don't have the guts.",
-            "Parallel lines have so much in common. It’s a shame they’ll never meet.",
-            "My wife asked me to stop singing 'Wonderwall' by Oasis. I said maybe.",
-            "Why was the math book sad? Because it had too many problems.",
-            "I told my wife she should embrace her mistakes. She gave me a hug.",
-        ];
-
-        const ebooks = [
-            {
-                id: 1,
-                title: "Detroit Sentinels",
-                description: "A fictional story infused with biblical truth. We hope you enjoy and also received spiritual wisdom.",
-                price: "Free",
-                // Use the Google Drive link
-                downloadUrl: "https://drive.google.com/file/d/1XLJLVBCd1DkLJgDgmwlhZOMzyZly0rb9/view?usp=drive_link"
-            },
-        ];
+        const verseContainer = document.getElementById('daily-verse');
+        const today = new Date();
+        const startOfYear = new Date(today.getFullYear(), 0, 0);
+        const diff = today - startOfYear;
+        const oneDay = 1000 * 60 * 60 * 24;
+        const dayOfYear = Math.floor(diff / oneDay);
+        
+        // Use modulo to loop through the verses if there are fewer than 366.
+        const verseIndex = dayOfYear % bibleVerses.length;
+        verseContainer.textContent = bibleVerses[verseIndex];
 
         // --- Chess Game Logic ---
-        const initialBoard = [
-            ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
-            ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
-            [null, null, null, null, null, null, null, null],
-            [null, null, null, null, null, null, null, null],
-            [null, null, null, null, null, null, null, null],
-            [null, null, null, null, null, null, null, null],
-            ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
-            ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
-        ];
+        const canvas = document.getElementById('chess-board-canvas');
+        const ctx = canvas.getContext('2d');
+        const statusDiv = document.getElementById('status');
+        const resetButton = document.getElementById('reset-button');
+        let boardSize = Math.min(window.innerWidth * 0.8, window.innerHeight * 0.8, 600);
+        let cellSize = boardSize / 8;
 
-        const PIECES = {
-            'R': '♜', 'N': '♞', 'B': '♝', 'Q': '♛', 'K': '♚', 'P': '♟',
-            'r': '♖', 'n': '♘', 'b': '♗', 'q': '♕', 'k': '♔', 'p': '♙'
+        canvas.width = boardSize;
+        canvas.height = boardSize;
+
+        let board = [];
+        let currentPlayer = 'white';
+        let selectedPiece = null;
+        let selectedCell = null;
+
+        const pieceSymbols = {
+            'wR': '♖', 'wN': '♘', 'wB': '♗', 'wQ': '♕', 'wK': '♔', 'wP': '♙',
+            'bR': '♜', 'bN': '♞', 'bB': '♝', 'bQ': '♛', 'bK': '♚', 'bP': '♟︎'
         };
 
-        const getPieceColor = (piece) => {
-            if (!piece) return null;
-            return piece.toUpperCase() === piece ? 'white' : 'black';
-        };
+        function resetGame() {
+            // Initial board setup
+            board = [
+                ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR'],
+                ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'],
+                [null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null],
+                ['wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP'],
+                ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR']
+            ];
+            currentPlayer = 'white';
+            selectedPiece = null;
+            selectedCell = null;
+            updateStatus('White to move.');
+            drawBoard();
+        }
 
-        const getValidMoves = (board, row, col) => {
-            const piece = board[row][col];
-            if (!piece) return [];
-            const pieceType = piece.toLowerCase();
-            const pieceColor = getPieceColor(piece);
-            const moves = [];
+        function drawBoard() {
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    ctx.fillStyle = (row + col) % 2 === 0 ? '#f0d2c2' : '#9b5d4f';
+                    ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+                }
+            }
+            drawPieces();
+        }
 
-            const directions = {
-                pawn: pieceColor === 'white' ? [{r: -1, c: 0}] : [{r: 1, c: 0}],
-                pawnCapture: pieceColor === 'white' ? [{r: -1, c: -1}, {r: -1, c: 1}] : [{r: 1, c: -1}, {r: 1, c: 1}],
-                rook: [{r: 1, c: 0}, {r: -1, c: 0}, {r: 0, c: 1}, {r: 0, c: -1}],
-                knight: [{r: 2, c: 1}, {r: 2, c: -1}, {r: -2, c: 1}, {r: -2, c: -1}, {r: 1, c: 2}, {r: 1, c: -2}, {r: -1, c: 2}, {r: -1, c: -2}],
-                bishop: [{r: 1, c: 1}, {r: 1, c: -1}, {r: -1, c: 1}, {r: -1, c: -1}],
-                queen: [{r: 1, c: 0}, {r: -1, c: 0}, {r: 0, c: 1}, {r: 0, c: -1}, {r: 1, c: 1}, {r: 1, c: -1}, {r: -1, c: 1}, {r: -1, c: -1}],
-                king: [{r: 1, c: 0}, {r: -1, c: 0}, {r: 0, c: 1}, {r: 0, c: -1}, {r: 1, c: 1}, {r: 1, c: -1}, {r: -1, c: 1}, {r: -1, c: -1}]
-            };
-
-            const checkAndAddMove = (newRow, newCol) => {
-                if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
-                    const targetPiece = board[newRow][newCol];
-                    if (!targetPiece || getPieceColor(targetPiece) !== pieceColor) {
-                        moves.push({ row: newRow, col: newCol });
+        function drawPieces() {
+            ctx.font = `${cellSize * 0.7}px serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const piece = board[row][col];
+                    if (piece) {
+                        const symbol = pieceSymbols[piece];
+                        ctx.fillStyle = piece.startsWith('w') ? 'white' : 'black';
+                        ctx.fillText(symbol, col * cellSize + cellSize / 2, row * cellSize + cellSize / 2);
                     }
                 }
-            };
-            
+            }
+        }
+
+        function updateStatus(message) {
+            statusDiv.textContent = message;
+        }
+
+        function onCanvasClick(event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            const col = Math.floor(x / cellSize);
+            const row = Math.floor(y / cellSize);
+
+            if (selectedPiece === null) {
+                // No piece selected, try to select one
+                const piece = board[row][col];
+                if (piece && (piece.startsWith('w') && currentPlayer === 'white' || piece.startsWith('b') && currentPlayer === 'black')) {
+                    selectedPiece = piece;
+                    selectedCell = { row, col };
+                    updateStatus(`Selected ${selectedPiece}. Now select a destination.`);
+                }
+            } else {
+                // A piece is selected, try to move it
+                if (isValidMove(selectedCell, { row, col })) {
+                    board[row][col] = selectedPiece;
+                    board[selectedCell.row][selectedCell.col] = null;
+                    currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
+                    selectedPiece = null;
+                    selectedCell = null;
+                    updateStatus(`${currentPlayer === 'white' ? 'White' : 'Black'} to move.`);
+                } else {
+                    updateStatus('Invalid move. Try again.');
+                }
+                selectedPiece = null;
+                selectedCell = null;
+            }
+            drawBoard();
+        }
+        
+        // This is a simplified move validation for a playable demo, not a full chess engine.
+        function isValidMove(from, to) {
+            const piece = board[from.row][from.col];
+            if (!piece) return false;
+
+            const dx = Math.abs(to.col - from.col);
+            const dy = Math.abs(to.row - from.row);
+            const pieceType = piece.substring(1);
+
             switch (pieceType) {
-                case 'p':
-                    // Single move
-                    let singleMoveRow = row + directions.pawn[0].r;
-                    if (singleMoveRow >= 0 && singleMoveRow < 8 && !board[singleMoveRow][col]) {
-                        checkAndAddMove(singleMoveRow, col);
-                        // Double move
-                        let startRow = pieceColor === 'white' ? 6 : 1;
-                        if (row === startRow) {
-                            let doubleMoveRow = row + directions.pawn[0].r * 2;
-                            if (!board[doubleMoveRow][col]) {
-                                checkAndAddMove(doubleMoveRow, col);
-                            }
-                        }
+                case 'P': // Pawn
+                    const direction = piece.startsWith('w') ? -1 : 1;
+                    const startRow = piece.startsWith('w') ? 6 : 1;
+                    
+                    // Simple forward move
+                    if (to.col === from.col && board[to.row][to.col] === null) {
+                        if (dy === 1) return true;
+                        // Initial two-square move
+                        if (from.row === startRow && dy === 2 && board[from.row + direction][from.col] === null) return true;
                     }
-                    // Captures
-                    directions.pawnCapture.forEach(dir => {
-                        let newRow = row + dir.r;
-                        let newCol = col + dir.c;
-                        if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
-                            const targetPiece = board[newRow][newCol];
-                            if (targetPiece && getPieceColor(targetPiece) !== pieceColor) {
-                                moves.push({ row: newRow, col: newCol });
-                            }
-                        }
-                    });
-                    break;
-                case 'r':
-                case 'b':
-                case 'q':
-                    const pieceDirs = directions[pieceType === 'r' ? 'rook' : (pieceType === 'b' ? 'bishop' : 'queen')];
-                    pieceDirs.forEach(dir => {
-                        for (let i = 1; i < 8; i++) {
-                            const newRow = row + dir.r * i;
-                            const newCol = col + dir.c * i;
-                            if (newRow >= 0 && newCol >= 0 && newRow < 8 && newCol < 8) {
-                                const targetPiece = board[newRow][newCol];
-                                if (targetPiece) {
-                                    if (getPieceColor(targetPiece) !== pieceColor) {
-                                        moves.push({ row: newRow, col: newCol });
-                                    }
-                                    break; // Stop at first piece
-                                } else {
-                                    moves.push({ row: newRow, col: newCol });
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-                    });
-                    break;
-                case 'n':
-                case 'k':
-                    directions[pieceType === 'n' ? 'knight' : 'king'].forEach(dir => {
-                        checkAndAddMove(row + dir.r, col + dir.c);
-                    });
-                    break;
+                    // Simple capture
+                    if (dx === 1 && dy === 1 && board[to.row][to.col] !== null) {
+                        return true;
+                    }
+                    return false;
+                case 'R': // Rook
+                    if (dx === 0 || dy === 0) return true;
+                    return false;
+                case 'N': // Knight
+                    if ((dx === 1 && dy === 2) || (dx === 2 && dy === 1)) return true;
+                    return false;
+                case 'B': // Bishop
+                    if (dx === dy) return true;
+                    return false;
+                case 'Q': // Queen
+                    if (dx === dy || dx === 0 || dy === 0) return true;
+                    return false;
+                case 'K': // King
+                    if (dx <= 1 && dy <= 1) return true;
+                    return false;
+                default:
+                    return false;
             }
-            return moves;
-        };
+        }
 
-        const isKingCaptured = (board, color) => {
-            const opponentKing = color === 'white' ? 'k' : 'K';
-            return board.flat().includes(opponentKing);
-        };
+        canvas.addEventListener('click', onCanvasClick);
+        resetButton.addEventListener('click', resetGame);
         
-        // --- Spades Game Logic ---
-        const suits = ['spades', 'hearts', 'diamonds', 'clubs'];
-        const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+        // --- Rock Paper Scissors Logic ---
+        window.playRPS = function(userChoice) {
+            const choices = ['rock', 'paper', 'scissors'];
+            const computerChoice = choices[Math.floor(Math.random() * choices.length)];
+            const rpsResult = document.getElementById('rps-result');
 
-        const createDeck = () => {
-            let deck = [];
-            for (let suit of suits) {
-                for (let value of values) {
-                    deck.push({ suit, value });
-                }
+            let resultMessage = `You chose ${userChoice}. The computer chose ${computerChoice}. `;
+            
+            if (userChoice === computerChoice) {
+                resultMessage += "It's a tie!";
+            } else if (
+                (userChoice === 'rock' && computerChoice === 'scissors') ||
+                (userChoice === 'paper' && computerChoice === 'rock') ||
+                (userChoice === 'scissors' && computerChoice === 'paper')
+            ) {
+                resultMessage += "You win!";
+            } else {
+                resultMessage += "You lose!";
             }
-            return deck;
+            rpsResult.textContent = resultMessage;
         };
 
-        const shuffleDeck = (deck) => {
-            for (let i = deck.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [deck[i], deck[j]] = [deck[j], deck[i]];
-            }
-            return deck;
-        };
-        
-        const cardStrength = (card) => {
-            const suitRank = { 'clubs': 1, 'diamonds': 2, 'hearts': 3, 'spades': 4 };
-            const valueRank = { '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 };
-            return {
-                suit: suitRank[card.suit],
-                value: valueRank[card.value]
-            };
-        };
+        // Initialize the app on page load
+        showSection('main-content');
+        resetGame();
 
-        const determineWinner = (trick, trumpSuit) => {
-            if (trick.length === 0) return null;
+    });
+</script>
 
-            let highestCard = trick[0].card;
-            let winningPlayerIndex = trick[0].playerIndex;
-            let currentSuit = highestCard.suit;
-
-            // First, find the highest card of the suit that was led
-            for (let i = 1; i < trick.length; i++) {
-                const { card, playerIndex } = trick[i];
-                if (card.suit === currentSuit && cardStrength(card).value > cardStrength(highestCard).value) {
-                    highestCard = card;
-                    winningPlayerIndex = playerIndex;
-                }
-            }
-
-            // Then, check for any trumps (spades)
-            let highestTrump = null;
-            let trumpWinnerIndex = null;
-            for (let i = 0; i < trick.length; i++) {
-                const { card, playerIndex } = trick[i];
-                if (card.suit === 'spades') {
-                    if (!highestTrump || cardStrength(card).value > cardStrength(highestTrump).value) {
-                        highestTrump = card;
-                        trumpWinnerIndex = playerIndex;
-                    }
-                }
-            }
-            
-            if (highestTrump) {
-                return trumpWinnerIndex;
-            }
-            
-            return winningPlayerIndex;
-        };
-        
-        const isValidSpadesMove = (hand, card, leadSuit) => {
-            if (card.suit === leadSuit) {
-                return true;
-            }
-            // If the player doesn't have the lead suit, they can play any card.
-            if (!hand.some(c => c.suit === leadSuit)) {
-                return true;
-            }
-            return false;
-        };
-
-        // --- Main App Component ---
-        const App = () => {
-            const [currentVerse, setCurrentVerse] = useState(bibleVerses[0]);
-            const [currentJoke, setCurrentJoke] = useState(dadJokes[0]);
-            const [currentPage, setCurrentPage] = useState('home');
-            const [messageBox, setMessageBox] = useState({ visible: false, text: '' });
-            const [currentGame, setCurrentGame] = useState('menu');
-            
-            // Chess State
-            const [chessBoard, setChessBoard] = useState(JSON.parse(JSON.stringify(initialBoard)));
-            const [selectedPiece, setSelectedPiece] = useState(null);
-            const [chessMessage, setChessMessage] = useState('White to move.');
-            const [turn, setTurn] = useState('white');
-            const [isGameOver, setIsGameOver] = useState(false);
-            
-            // Spades Game State
-            const [spadesState, setSpadesState] = useState({
-                players: [],
-                hands: [[]],
-                bids: [],
-                tricksWon: [],
-                trick: [],
-                scores: [0, 0],
-                bags: [0, 0],
-                leadSuit: null,
-                playerTurn: 0,
-                phase: 'bidding',
-                message: "Place your bid.",
-                round: 1
-            });
-
-            useEffect(() => {
-                if (turn === 'black' && !isGameOver) {
-                    setTimeout(makeComputerMove, 1000);
-                }
-            }, [turn, isGameOver]);
-
-            useEffect(() => {
-                if (spadesState.phase === 'playing' && spadesState.playerTurn !== 0) {
-                    setTimeout(() => makeSpadesAIMove(), 1000);
-                }
-            }, [spadesState.phase, spadesState.playerTurn]);
-
-            const showMessageBox = (text) => {
-                setMessageBox({ visible: true, text });
-            };
-
-            const getRandomVerse = () => {
-                const randomIndex = Math.floor(Math.random() * bibleVerses.length);
-                setCurrentVerse(bibleVerses[randomIndex]);
-            };
-            
-            const getRandomJoke = () => {
-                const randomIndex = Math.floor(Math.random() * dadJokes.length);
-                setCurrentJoke(dadJokes[randomIndex]);
-            };
-
-            // --- Chess Logic ---
-            const makeComputerMove = () => {
-                const blackPieces = [];
-                for (let r = 0; r < 8; r++) {
-                    for (let c = 0; c < 8; c++) {
-                        const piece = chessBoard[r][c];
-                        if (piece && getPieceColor(piece) === 'black') {
-                            blackPieces.push({ piece, row: r, col: c });
-                        }
-                    }
-                }
-                
-                let possibleMoves = [];
-                blackPieces.forEach(p => {
-                    const validMoves = getValidMoves(chessBoard, p.row, p.col);
-                    validMoves.forEach(move => {
-                        possibleMoves.push({ from: {row: p.row, col: p.col}, to: move });
-                    });
-                });
-                
-                if (possibleMoves.length > 0) {
-                    const randomMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
-                    const newBoard = JSON.parse(JSON.stringify(chessBoard));
-                    
-                    const movedPiece = newBoard[randomMove.from.row][randomMove.from.col];
-                    newBoard[randomMove.to.row][randomMove.to.col] = movedPiece;
-                    newBoard[randomMove.from.row][randomMove.from.col] = null;
-
-                    if (isKingCaptured(newBoard, 'white')) {
-                        setChessMessage('Black wins! The King has been captured.');
-                        setIsGameOver(true);
-                    } else {
-                        setChessMessage('White to move.');
-                        setTurn('white');
-                    }
-                    setChessBoard(newBoard);
-                } else {
-                    setChessMessage("Stalemate! Black can't move.");
-                    setIsGameOver(true);
-                }
-            };
-
-            const handleChessClick = (row, col) => {
-                if (isGameOver || turn === 'black') return;
-
-                if (!selectedPiece) {
-                    const piece = chessBoard[row][col];
-                    if (piece && getPieceColor(piece) === turn) {
-                        setSelectedPiece({ row, col });
-                    }
-                } else {
-                    const fromRow = selectedPiece.row;
-                    const fromCol = selectedPiece.col;
-                    const newBoard = JSON.parse(JSON.stringify(chessBoard));
-                    const pieceToMove = newBoard[fromRow][fromCol];
-                    
-                    const validMoves = getValidMoves(chessBoard, fromRow, fromCol);
-                    const isMoveValid = validMoves.some(move => move.row === row && move.col === col);
-                    
-                    if (isMoveValid) {
-                        newBoard[row][col] = pieceToMove;
-                        newBoard[fromRow][fromCol] = null;
-                        
-                        if (isKingCaptured(newBoard, 'black')) {
-                            setChessMessage('White wins! The King has been captured.');
-                            setIsGameOver(true);
-                        } else {
-                            setChessMessage('Black is thinking...');
-                            setTurn('black');
-                        }
-                        setChessBoard(newBoard);
-                    } else {
-                        showMessageBox("Invalid move.");
-                    }
-                    setSelectedPiece(null);
-                }
-            };
-            
-            const resetChessGame = () => {
-                setChessBoard(JSON.parse(JSON.stringify(initialBoard)));
-                setSelectedPiece(null);
-                setChessMessage('White to move.');
-                setTurn('white');
-                setIsGameOver(false);
-            };
-
-            // --- Spades Logic ---
-            const startNewSpadesGame = () => {
-                const deck = shuffleDeck(createDeck());
-                const hands = [[], [], [], []];
-                for (let i = 0; i < 52; i++) {
-                    hands[i % 4].push(deck[i]);
-                }
-                
-                setSpadesState({
-                    players: ['You', 'Computer 1', 'Computer 2', 'Computer 3'],
-                    hands,
-                    bids: [0, 0, 0, 0],
-                    tricksWon: [0, 0, 0, 0],
-                    trick: [],
-                    scores: [0, 0],
-                    bags: [0, 0],
-                    leadSuit: null,
-                    playerTurn: 0,
-                    phase: 'bidding',
-                    message: "Place your bid.",
-                    round: 1
-                });
-            };
-
-            const handleSpadesBid = (bid) => {
-                const newBids = [...spadesState.bids];
-                newBids[0] = bid;
-                setSpadesState(prev => ({
-                    ...prev,
-                    bids: newBids,
-                    message: "Bids are in. Game starts!",
-                    phase: 'playing',
-                    playerTurn: 0 // Player always goes first
-                }));
-            };
-
-            const calculateScores = () => {
-                const { bids, tricksWon, scores, bags } = spadesState;
-                const newScores = [...scores];
-                const newBags = [...bags];
-                
-                // Calculate team 1 (player and computer 2)
-                const team1Bid = bids[0] + bids[2];
-                const team1Tricks = tricksWon[0] + tricksWon[2];
-                if (team1Tricks >= team1Bid) {
-                    newScores[0] += team1Bid * 10;
-                    newBags[0] += team1Tricks - team1Bid;
-                } else {
-                    newScores[0] -= team1Bid * 10;
-                }
-
-                // Calculate team 2 (computer 1 and computer 3)
-                const team2Bid = bids[1] + bids[3];
-                const team2Tricks = tricksWon[1] + tricksWon[3];
-                if (team2Tricks >= team2Bid) {
-                    newScores[1] += team2Bid * 10;
-                    newBags[1] += team2Tricks - team2Bid;
-                } else {
-                    newScores[1] -= team2Bid * 10;
-                }
-
-                // Check for bag penalties
-                if (newBags[0] >= 10) {
-                    newScores[0] -= 100;
-                    newBags[0] -= 10;
-                }
-                if (newBags[1] >= 10) {
-                    newScores[1] -= 100;
-                    newBags[1] -= 10;
-                }
-
-                setSpadesState(prev => ({
-                    ...prev,
-                    scores: newScores,
-                    bags: newBags,
-                    round: prev.round + 1,
-                    message: `Round ${prev.round} over. Scores updated. Starting next round...`,
-                    phase: 'bidding'
-                }));
-                setTimeout(startNewSpadesGame, 2000);
-            };
-
-            const handleSpadesPlayerMove = (card) => {
-                if (spadesState.playerTurn !== 0 || isGameOver) return;
-                
-                const currentHand = spadesState.hands[0];
-                if (!isValidSpadesMove(currentHand, card, spadesState.leadSuit)) {
-                    showMessageBox("You must follow suit if you can!");
-                    return;
-                }
-
-                const newHands = [...spadesState.hands];
-                const cardIndex = newHands[0].findIndex(c => c.suit === card.suit && c.value === card.value);
-                newHands[0].splice(cardIndex, 1);
-                
-                const newTrick = [...spadesState.trick, { card, playerIndex: 0 }];
-                
-                setSpadesState(prev => ({
-                    ...prev,
-                    hands: newHands,
-                    trick: newTrick,
-                    leadSuit: prev.leadSuit || card.suit,
-                    playerTurn: (prev.playerTurn + 1) % 4
-                }));
-            };
-            
-            const makeSpadesAIMove = () => {
-                const currentPlayerIndex = spadesState.playerTurn;
-                const currentHand = spadesState.hands[currentPlayerIndex];
-                const newTrick = [...spadesState.trick];
-                let cardToPlay;
-                
-                // Simplified AI logic: find a valid card, if none, play first one
-                const validCards = currentHand.filter(card => isValidSpadesMove(currentHand, card, spadesState.leadSuit));
-                if (validCards.length > 0) {
-                     cardToPlay = validCards[0];
-                } else {
-                    cardToPlay = currentHand[0];
-                }
-
-                const newHands = [...spadesState.hands];
-                const cardIndex = newHands[currentPlayerIndex].findIndex(c => c.suit === cardToPlay.suit && c.value === cardToPlay.value);
-                newHands[currentPlayerIndex].splice(cardIndex, 1);
-                newTrick.push({ card: cardToPlay, playerIndex: currentPlayerIndex });
-
-                setSpadesState(prev => ({
-                    ...prev,
-                    hands: newHands,
-                    trick: newTrick,
-                    leadSuit: prev.leadSuit || cardToPlay.suit,
-                    playerTurn: (prev.playerTurn + 1) % 4
-                }));
-            };
-            
-            useEffect(() => {
-                if (spadesState.trick.length === 4) {
-                    const winner = determineWinner(spadesState.trick, 'spades');
-                    const newTricksWon = [...spadesState.tricksWon];
-                    newTricksWon[winner]++;
-                    
-                    if (spadesState.hands.some(hand => hand.length === 0)) {
-                        setSpadesState(prev => ({
-                            ...prev,
-                            tricksWon: newTricksWon,
-                            trick: [],
-                            leadSuit: null,
-                            playerTurn: winner,
-                            message: `Round complete! Player ${winner + 1} won this trick.`
-                        }));
-                        setTimeout(calculateScores, 2000);
-                    } else {
-                         setSpadesState(prev => ({
-                            ...prev,
-                            tricksWon: newTricksWon,
-                            trick: [],
-                            leadSuit: null,
-                            playerTurn: winner,
-                            message: `Player ${winner + 1} won this trick.`
-                        }));
-                    }
-                }
-            }, [spadesState.trick]);
-
-            const renderSpadesBidding = () => {
-                const bids = Array.from({ length: 14 }, (_, i) => i); // 0-13
-                return c('div', { className: "flex flex-col items-center" },
-                    c('h3', { className: "text-xl font-bold mb-4" }, "Place your bid (0-13):"),
-                    c('div', { className: "grid grid-cols-7 gap-2 max-w-lg" },
-                        bids.map(bid => c('button', {
-                            key: bid,
-                            onClick: () => handleSpadesBid(bid),
-                            className: "p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                        }, bid))
-                    )
-                );
-            };
-
-            const renderSpadesGame = () => {
-                const { players, hands, bids, tricksWon, trick, playerTurn, scores, bags } = spadesState;
-                const playerHand = hands[0];
-                const isPlayerTurn = playerTurn === 0;
-
-                return c('div', { className: "flex flex-col items-center p-4 space-y-4" },
-                    c('button', {
-                        onClick: () => setCurrentGame('menu'),
-                        className: "absolute top-4 left-4 text-gray-500 hover:text-gray-800 transition-colors"
-                    }, '← Back'),
-                    c('h2', { className: "text-2xl font-bold" }, "Spades"),
-                    c('p', { className: "text-lg text-gray-600 mb-4" }, spadesState.message),
-                    c('div', { className: "flex justify-center w-full" },
-                         c('div', { className: "grid grid-cols-4 gap-4" },
-                            trick.map((playedCard, index) => c('div', { key: index, className: "p-2 text-center" },
-                                c('div', { className: "text-3xl" }, `
-                                    ${playedCard.card.suit === 'spades' ? '♠️' : playedCard.card.suit === 'hearts' ? '♥️' : playedCard.card.suit === 'diamonds' ? '♦️' : '♣️'}
-                                    ${playedCard.card.value}
-                                `),
-                                c('p', { className: "text-xs mt-1" }, players[playedCard.playerIndex])
-                            ))
-                        )
-                    ),
-                    c('div', { className: "text-center my-4" }, `It's ${players[playerTurn]}'s turn.`),
-                    c('div', { className: "w-full overflow-x-auto" },
-                        c('div', { className: "flex justify-center space-x-2" },
-                            playerHand.sort((a,b) => cardStrength(a).suit - cardStrength(b).suit || cardStrength(a).value - cardStrength(b).value).map((card, index) => c('button', {
-                                key: `${card.suit}-${card.value}`,
-                                onClick: () => handleSpadesPlayerMove(card),
-                                disabled: !isPlayerTurn || spadesState.phase !== 'playing',
-                                className: `p-2 rounded-lg border-2 shadow-md transition-transform transform ${card.suit === 'hearts' || card.suit === 'diamonds' ? 'text-red-500' : 'text-gray-800'} ${isPlayerTurn && spadesState.phase === 'playing' ? 'hover:scale-110' : ''}`
-                            }, c('div', { className: "text-lg font-bold" }, card.value), c('div', { className: "text-xs" }, card.suit)))
-                        )
-                    ),
-                    c('div', { className: "mt-6 w-full max-w-lg bg-gray-100 p-4 rounded-xl shadow-inner" },
-                        c('h3', { className: "text-lg font-bold text-center mb-2" }, "Scoreboard"),
-                        c('div', { className: "grid grid-cols-2 gap-2 text-center" },
-                            c('div', { className: "font-bold text-lg" }, "Team 1 (You & C2)"),
-                            c('div', { className: "font-bold text-lg" }, "Team 2 (C1 & C3)"),
-                            c('div', null, `Score: ${scores[0]}`),
-                            c('div', null, `Score: ${scores[1]}`),
-                            c('div', null, `Bags: ${bags[0]}`),
-                            c('div', null, `Bags: ${bags[1]}`)
-                        )
-                    )
-                );
-            };
-
-            const renderMessageBox = () => {
-                if (!messageBox.visible) {
-                    return null;
-                }
-                return c('div', { className: "fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50" },
-                    c('div', { className: "bg-white p-6 rounded-xl shadow-lg text-center max-w-sm w-full" },
-                        c('p', { className: "text-gray-800 font-semibold mb-4" }, messageBox.text),
-                        c('button', {
-                            onClick: () => setMessageBox({ visible: false, text: '' }),
-                            className: "bg-indigo-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg hover:bg-indigo-700 transition transform hover:scale-105"
-                        }, 'OK')
-                    )
-                );
-            };
-
-            const renderContent = () => {
-                switch (currentPage) {
-                    case 'home':
-                        return c('div', null,
-                            c('div', { className: "relative mb-6 text-center text-gray-700" },
-                                c('p', { className: "text-lg font-semibold" }, 'Thanks for downloading! 🙏'),
-                                c('p', { className: "mt-1" },
-                                    'Feel free to add me on YouTube and TikTok',
-                                    c('br', null),
-                                    c('a', { href: "https://www.youtube.com/@docart07", target: "_blank", rel: "noopener noreferrer", className: "text-blue-500 hover:text-blue-700 font-bold" }, '@docart07')
-                                )
-                            ),
-                            c('div', { className: "relative mb-6" },
-                                c('img', {
-                                    src: "https://placehold.co/400x400/94a3b8/0f172a?text=Docart07",
-                                    alt: "User's profile graphic",
-                                    className: "w-full rounded-xl shadow-lg border-2 border-gray-200"
-                                })
-                            ),
-                            c('div', { className: "flex flex-col space-y-8" },
-                                c('div', { className: "bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-6 rounded-lg shadow-inner" },
-                                    c('div', { className: "flex items-center justify-center mb-4" },
-                                        c(icons.BookA, { size: 24, className: "mr-2" }),
-                                        c('h2', { className: "text-xl font-bold" }, 'Verse of the Day')
-                                    ),
-                                    c('p', { className: "text-center italic font-light mb-2" }, `"${currentVerse.text}"`),
-                                    c('p', { className: "text-right font-semibold text-sm" }, `-- ${currentVerse.citation}`),
-                                    c('div', { className: "flex justify-center mt-4" },
-                                        c('button', {
-                                            onClick: getRandomVerse,
-                                            className: "bg-white text-indigo-600 font-semibold py-2 px-4 rounded-full shadow-md transition transform hover:scale-105 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white"
-                                        }, 'New Verse')
-                                    )
-                                ),
-                                c('div', { className: "bg-gradient-to-r from-yellow-400 to-orange-500 text-white p-6 rounded-lg shadow-inner" },
-                                    c('div', { className: "flex items-center justify-center mb-4" },
-                                        c(icons.Laugh, { size: 24, className: "mr-2" }),
-                                        c('h2', { className: "text-xl font-bold" }, 'Dad Joke')
-                                    ),
-                                    c('p', { className: "text-center font-light mb-2" }, `"${currentJoke}"`),
-                                    c('div', { className: "flex justify-center mt-4" },
-                                        c('button', {
-                                            onClick: getRandomJoke,
-                                            className: "bg-white text-orange-500 font-semibold py-2 px-4 rounded-full shadow-md transition transform hover:scale-105 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white"
-                                        }, 'Another Joke')
-                                    )
-                                )
-                            )
-                        );
-                    case 'ebooks':
-                        return c('div', null,
-                            c('h2', { className: "text-2xl font-bold text-center text-gray-800 mb-6" }, 'My Ebooks'),
-                            c('div', { className: "grid gap-6" },
-                                ebooks.map(ebook => c('div', { key: ebook.id, className: "bg-gray-50 p-6 rounded-xl shadow-md border border-gray-200 flex flex-col items-center text-center" },
-                                    c(icons.Book, { size: 48, className: "text-indigo-500 mb-3" }),
-                                    c('h3', { className: "text-lg font-bold text-gray-900" }, ebook.title),
-                                    c('p', { className: "text-sm text-gray-600 mt-1 mb-3" }, ebook.description),
-                                    c('span', { className: "text-xl font-bold text-indigo-600 mb-4" }, ebook.price),
-                                    // Button that links to the Google Drive file
-                                    c('a', {
-                                        href: ebook.downloadUrl,
-                                        className: "bg-indigo-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg hover:bg-indigo-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
-                                        target: "_blank"
-                                    }, 'View Ebook'),
-                                    c('div', { className: "mt-4 text-sm text-gray-700" },
-                                        c('p', null, 'Everything is free but if you would like to donate any amount you could do so via'),
-                                        c('a', {
-                                            href: "https://paypal.me/DenzelNewson93",
-                                            target: "_blank",
-                                            rel: "noopener noreferrer",
-                                            className: "font-bold text-blue-500 hover:text-blue-700 transition-colors"
-                                        }, 'PayPal @DenzelNewson93'),
-                                        c('p', { className: "mt-1" }, 'God bless.')
-                                    )
-                                ))
-                            ),
-                            c('p', { className: "text-center text-xs text-gray-500 mt-6" }, '*These buttons are for demonstration purposes only.')
-                        );
-                    case 'game':
-                        switch (currentGame) {
-                            case 'menu':
-                                return c('div', { className: "flex flex-col items-center p-6 space-y-4 text-center" },
-                                    c('h2', { className: "text-2xl font-bold text-gray-800" }, 'Select a Game'),
-                                    c('div', { className: "flex flex-col space-y-4 w-full" },
-                                        c('button', {
-                                            onClick: () => {
-                                                setCurrentGame('spades');
-                                                startNewSpadesGame();
-                                            },
-                                            className: "bg-gray-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-gray-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                                        }, '2D Spades'),
-                                        c('button', {
-                                            onClick: () => setCurrentGame('chess'),
-                                            className: "bg-red-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-red-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                                        }, '2D Chess'),
-                                    )
-                                );
-                            case 'chess':
-                                return c('div', { className: "flex flex-col items-center p-6 space-y-4 text-center" },
-                                    c('button', {
-                                        onClick: () => setCurrentGame('menu'),
-                                        className: "absolute top-4 left-4 text-gray-500 hover:text-gray-800 transition-colors"
-                                    }, '← Back'),
-                                    c('h2', { className: "text-2xl font-bold text-gray-800" }, '2D Chess Game'),
-                                    c('p', { className: `text-lg font-semibold ${isGameOver ? 'text-red-600' : 'text-gray-600'}` }, chessMessage),
-                                    c('div', { className: "grid grid-cols-8 grid-rows-8 w-[400px] h-[400px] border-2 border-gray-700 shadow-xl" },
-                                        chessBoard.flat().map((piece, index) => {
-                                            const row = Math.floor(index / 8);
-                                            const col = index % 8;
-                                            const isDark = (row + col) % 2 === 1;
-                                            const isSelected = selectedPiece && selectedPiece.row === row && selectedPiece.col === col;
-
-                                            return c('button', {
-                                                key: index,
-                                                onClick: () => handleChessClick(row, col),
-                                                className: `w-full h-full text-3xl flex items-center justify-center font-serif transition-colors ${ isDark ? 'bg-amber-800' : 'bg-amber-100' } ${ isSelected ? 'ring-4 ring-yellow-400' : '' }`
-                                            }, piece ? PIECES[piece] : '');
-                                        })
-                                    ),
-                                    isGameOver && c('button', {
-                                        onClick: resetChessGame,
-                                        className: "mt-4 bg-blue-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:scale-105"
-                                    }, 'Play Again')
-                                );
-                            case 'spades':
-                                return spadesState.phase === 'bidding' ? renderSpadesBidding() : renderSpadesGame();
-                            default:
-                                return null;
-                        }
-                    case 'purpose':
-                        return c('div', { className: "text-center p-4" },
-                            c('h2', { className: "text-2xl font-bold text-gray-800 mb-4" }, 'Our Purpose'),
-                            c('div', { className: "text-gray-700 space-y-4 text-left" },
-                                c('p', null, 'Welcome, my name is Denzel but you can just call me DocArt and I care deeply for the youth! As a young man growing up in the inner city of Detroit I was always into drawing, basketball, riding bikes, video games etc etc. However I would see a lot of other youth get into wayward wicked activities that they had no business getting involved with. A lot of it was due to lack of resources and lack of parental leadership. And a lot of the time it was due to poor choices. However I don\'t think it is as bad as it is today.'),
-                                c('p', null, 'Currently, the culture for our youth today is pushing them further away from outside, wholesome content and it is encouraging them to identify with dark things just to fit in. I created this site and the content I create to combat the culture because nothing is more good or greater than mine and your Lord and Savior Jesus Christ.'),
-                                c('p', null, 'I believe If we put Him in everything we do we cannot fail and we also introduce others to Him. Playing a part in winning souls for His kingdom and taking souls from the opps kingdom.')
-                            )
-                        );
-                    default:
-                        return null;
-                }
-            };
-            
-            return c('div', { className: "flex flex-col items-center justify-center min-h-screen p-4 font-sans bg-sky-200" },
-                renderMessageBox(),
-                c('div', { className: "relative bg-white bg-opacity-90 rounded-xl shadow-2xl p-6 md:p-10 w-full max-w-lg mb-4" },
-                    c('h1', { className: "text-3xl font-graffiti text-gray-900 text-center mb-6" }, 'DocArtAtlier'),
-                    renderContent()
-                ),
-                c('nav', { className: "relative bg-white rounded-full shadow-xl w-full max-w-sm mt-4 p-2 flex justify-around" },
-                    c('button', { onClick: () => { setCurrentPage('home'); setCurrentGame('menu'); }, className: `flex-1 flex flex-col items-center p-2 rounded-full transition-colors ${ currentPage === 'home' ? 'bg-indigo-100 text-indigo-600' : 'text-gray-500 hover:text-indigo-600' }` },
-                        c(icons.BookA, { size: 20 }),
-                        c('span', { className: "text-xs font-medium mt-1" }, 'Home')
-                    ),
-                    c('button', { onClick: () => { setCurrentPage('ebooks'); setCurrentGame('menu'); }, className: `flex-1 flex flex-col items-center p-2 rounded-full transition-colors ${ currentPage === 'ebooks' ? 'bg-indigo-100 text-indigo-600' : 'text-gray-500 hover:text-indigo-600' }` },
-                        c(icons.Book, { size: 20 }),
-                        c('span', { className: "text-xs font-medium mt-1" }, 'Ebooks')
-                    ),
-                    c('button', { onClick: () => { setCurrentPage('game'); setCurrentGame('menu'); }, className: `flex-1 flex flex-col items-center p-2 rounded-full transition-colors ${ currentPage === 'game' ? 'bg-indigo-100 text-indigo-600' : 'text-gray-500 hover:text-indigo-600' }` },
-                        c(icons.Gamepad, { size: 20 }),
-                        c('span', { className: "text-xs font-medium mt-1" }, 'Game')
-                    ),
-                    c('button', { onClick: () => { setCurrentPage('purpose'); setCurrentGame('menu'); }, className: `flex-1 flex flex-col items-center p-2 rounded-full transition-colors ${ currentPage === 'purpose' ? 'bg-indigo-100 text-indigo-600' : 'text-gray-500 hover:text-indigo-600' }` },
-                        c(icons.Handshake, { size: 20 }),
-                        c('span', { className: "text-xs font-medium mt-1" }, 'Purpose')
-                    )
-                )
-            );
-        };
-        const container = document.getElementById('root');
-        const root = createRoot(container);
-        root.render(c(App));
-    </script>
 </body>
 </html>
